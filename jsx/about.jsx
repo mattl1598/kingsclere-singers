@@ -1,10 +1,14 @@
 function About({}) {
 	const committeeMembers = [
-		{name: "A. Smith", position: "Chairperson"},
-		{name: "B. Smith", position: "Secretary"},
-		{name: "C. Smith", position: "Treasurer"},
-		{name: "D. Smith", position: "Musical Director"},
-		{name: "E. Smith", position: "Events Coordinator"}
+		{name: "Jessica Craker", position: "Chairperson"},
+		{name: "Trish Le Flufy", position: "Secretary"},
+		{name: "Mandy Larby", position: "Treasurer"},
+		{name: "Hazel O'Leary", position: "Musical Director"},
+		{name: "Helen Follett", position: "Events Coordinator"},
+		{name: "Michelle Mader", position: "Publicity Coordinator"},
+		{name: "George March", position: "Choir Liaison"},
+		{name: "Val H", position: "Music Librarian"},
+		{name: "Vanessa H", position: "Music Librarian"},
 	];
 
 	const isMobile = mobileCheck()
