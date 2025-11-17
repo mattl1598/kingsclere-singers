@@ -1,0 +1,61 @@
+div.about {
+	&:not(.mobile) {
+		padding: 1rem 2rem;
+	}
+	&.mobile {
+		padding: 0.5rem 1rem;
+	}
+}
+
+div.about:not(.mobile) {
+	div.committee > div.members {
+		display: flex;
+		flex-direction: row;
+		flex-wrap: wrap;
+		justify-content: center;
+		padding: 0 15%;
+		gap: 1rem 2rem;
+
+		div.member {
+			min-width: 20rem;
+			max-width: fit-content;
+			font-size: 140%;
+		}
+	}
+}
+
+.member {
+	display: flex;
+	align-items: center;
+	background-color: #333333; // adjust to your desired bg
+	border-radius: 2em; // makes the left/right ends semicircles
+	padding: .75em 1em;
+	margin-bottom: 16px; // space between members
+
+	.image {
+		flex-shrink: 0;
+		img {
+			//width: 60px;
+			height: 3.5em;
+			border-radius: 50%; // makes the image circular
+			object-fit: cover;
+			display: block;
+		}
+	}
+
+	.text {
+		margin-left: .75em;
+		h3, h4 {
+			margin: 0;
+			line-height: 1.2;
+		}
+		h3 {
+			font-size: 1.1em;
+			font-weight: bold;
+		}
+		h4 {
+			font-size: 0.9em;
+			color: #bbb;
+		}
+	}
+}

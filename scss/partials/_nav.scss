@@ -1,0 +1,26 @@
+nav {
+	display: flex;
+	flex-direction: row;
+	gap: 1em;
+	align-items: center;
+	justify-content: center;
+	backdrop-filter: blur(1em);
+	width: 100%;
+
+	& > div {
+		cursor: pointer;
+		font-size: 2em;
+		font-weight: 700;
+		padding: 1em;
+		user-select: none;
+		border-bottom: .3125rem solid teal;
+
+		span {
+			filter: url("#smooth-outline");
+			user-select: none;
+		}
+
+		&:hover {
+		}
+	}
+}

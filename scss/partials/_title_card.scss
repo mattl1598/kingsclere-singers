@@ -1,0 +1,80 @@
+div.title_card {
+	width: 100dvw;
+	height: 100dvh;
+
+	display: grid;
+
+	grid-template-columns: 1fr auto 1fr;
+	grid-template-rows: 1fr auto 1fr;
+
+	place-items: center;
+
+	overflow: hidden;
+
+	&.mobile {
+		font-size: 50%;
+	}
+
+	div:has(img) {
+		grid-area: 1 / 1 / 4 / 4;
+		column-span: 3;
+		row-span: 3;
+		z-index: 1;
+		place-self: stretch;
+		//display: flex;
+
+		img {
+			height: 100%;
+			width: 100%;
+			place-self: stretch;
+			object-fit: cover;
+
+			filter: blur(.375rem);
+		}
+	}
+
+	div.text {
+		grid-area: 2 / 2 / 3 / 3;
+		z-index: 2;
+	}
+
+	h1{
+		//grid-area: 2 / 2 / 3 / 3;
+		text-align: center;
+		color: white;
+		font-size: 7.5em;
+
+		//-webkit-text-stroke: thin black;
+		//-webkit-text-fill-color: white;
+		//text-shadow: -0.125rem -0.125rem 0.125rem #000,
+		//0.125rem -0.125rem 0.125rem #000,
+		//-0.125rem 0.125rem 0.125rem #000,
+		//0.125rem 0.125rem 0.125rem #000;
+		//text-shadow: -1px -1px 0 #000,
+		//1px -1px 0 #000,
+		//-1px 1px 0 #000,
+		//1px 1px 0 #000;
+	}
+
+	h2 {
+		text-align: center;
+		color: white;
+		font-size: 3em;
+		//-webkit-text-stroke: -.0625em black;
+		//text-shadow: -1px -1px 0 #000,
+		//1px -1px 0 #000,
+		//-1px 1px 0 #000,
+		//1px 1px 0 #000;
+
+		//text-shadow: -0.0625rem -0.0625rem 0.0625rem #000,
+		//0.0625rem -0.0625rem 0.0625rem #000,
+		//-0.0625rem 0.0625rem 0.0625rem #000,
+		//0.0625rem 0.0625rem 0.0625rem #000;
+	}
+
+	nav {
+		grid-area: 3 / 1 / 4 / 4;
+		z-index: 2;
+		place-self: end center;
+	}
+}

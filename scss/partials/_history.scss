@@ -1,0 +1,60 @@
+div#history {
+	height: 100dvh;
+	display: grid;
+	grid-template-rows: min-content 1fr;
+	grid-template-columns: 1fr;
+
+	div.timeline {
+		display: grid;
+		grid-template-rows: min-content min-content min-content 1fr;
+		grid-template-columns: repeat(auto-fit, minmax(20rem, 1fr));
+
+		div.point {
+			display: grid;
+			grid-template-columns: 1fr;
+			grid-template-rows: subgrid;
+
+			grid-row: 1/4;
+
+			&:first-child {
+				div.line {
+					margin-left: 7rem;
+				}
+			}
+
+			div.date {
+				grid-row: 3/4;
+				place-self: center start;
+				margin-left: 3rem;
+			}
+			div.text {
+				grid-row: 1/2;
+				border-left: .5rem solid white;
+				margin-bottom: -.1rem;
+				margin-left: 4.75rem;
+				padding-bottom: 1rem;
+				padding-left: 1rem;
+			}
+			div.line {
+				grid-row: 2/3;
+				grid-column: 1/-1;
+				background-color: white;
+				height: .667rem;
+				place-self: center;
+				width: 100%;
+			}
+			div.circle {
+				grid-row: 2/3;
+				grid-column: 1/-1;
+				width: 4rem;
+				height: 4rem;
+				aspect-ratio: 1;
+				border-radius: 100rem;
+				background-color: white;
+				z-index: 10;
+				place-self: center start;
+				margin-left: 3rem;
+			}
+		}
+	}
+}
