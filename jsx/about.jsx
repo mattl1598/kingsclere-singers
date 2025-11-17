@@ -12,7 +12,7 @@ function About({}) {
 	];
 
 	const isMobile = mobileCheck()
-
+	// test
 	return (
 		<div id={"about"} className={`about snap ${isMobile ? "mobile" : ""}`}>
 			<h1 className={"title"}>About Kingsclere Singers</h1>
