@@ -6,7 +6,7 @@ app = Flask(__name__)
 
 @app.route("/")
 def index():
-	return send_file('index.html')
+	return send_file('index_dev.html')
 
 
 @app.route("/jsx/<file>")
