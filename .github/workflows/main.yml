@@ -1,0 +1,55 @@
+on:
+  push:
+    paths:
+      - '**.jsx'
+      - '**.scss'
+  pull_request:
+    paths:
+      - '**.jsx'
+      - '**.scss'
+
+permissions:
+  contents: write
+
+jobs:
+  compile:
+    name: compile jsx to js and scss to css
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v5.0.0
+      with:
+        fetch-depth: 0
+
+    - name: Install Dependencies
+      run: npm install @babel/core @babel/cli @babel/preset-react @babel/preset-env sass
+    
+    - name: Compile JSX
+      run: npx babel webapp/static/jsx --out-file webapp/static/js/app.js --presets=@babel/preset-react,@babel/preset-env 
+
+    - name: Compile SCSS
+      run: npx sass --no-source-map webapp/static/scss/app.scss webapp/static/css/app.css
+
+    - name: Commit compiled files (if changed)
+      id: commit
+      shell: bash
+      run: |
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action Transpiler"
+
+        git add webapp/static/js/app.js webapp/static/css/app.css
+
+        if git diff --cached --quiet; then
+          echo "No changes to commit"
+          echo "skip_push=true" >> "$GITHUB_OUTPUT"
+        else
+          git commit -m "Transpile latest JSX and SCSS to JS and CSS respectively"
+          echo "skip_push=false" >> "$GITHUB_OUTPUT"
+        fi
+
+    - name: Push changes
+      if: steps.commit.outputs.skip_push == 'false'
+      uses: ad-m/github-push-action@master
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
