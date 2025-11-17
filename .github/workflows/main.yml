@@ -26,10 +26,10 @@ jobs:
       run: npm install @babel/core @babel/cli @babel/preset-react @babel/preset-env sass
     
     - name: Compile JSX
-      run: npx babel webapp/static/jsx --out-file webapp/static/js/app.js --presets=@babel/preset-react,@babel/preset-env 
+      run: npx babel jsx --out-file app.js --presets=@babel/preset-react,@babel/preset-env 
 
     - name: Compile SCSS
-      run: npx sass --no-source-map webapp/static/scss/app.scss webapp/static/css/app.css
+      run: npx sass --no-source-map scss/app.scss app.css
 
     - name: Commit compiled files (if changed)
       id: commit
