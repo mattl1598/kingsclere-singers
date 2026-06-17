@@ -5,6 +5,16 @@ div.about {
 	&.mobile {
 		padding: 0.5rem 1rem;
 	}
+
+	scroll-snap-stop: normal !important;
+	height: fit-content !important;
+	min-height: 100dvh !important;
+}
+
+div.about div.committee {
+	h2 {
+		text-align: center;
+	}
 }
 
 div.about:not(.mobile) {
@@ -36,6 +46,7 @@ div.about:not(.mobile) {
 		flex-shrink: 0;
 		img {
 			//width: 60px;
+			aspect-ratio: 1;
 			height: 3.5em;
 			border-radius: 50%; // makes the image circular
 			object-fit: cover;

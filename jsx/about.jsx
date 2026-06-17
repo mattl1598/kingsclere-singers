@@ -1,15 +1,21 @@
 function About({}) {
-	const committeeMembers = [
-		{name: "Jessica Craker", position: "Chairperson"},
-		{name: "Trish Le Flufy", position: "Secretary"},
-		{name: "Mandy Larby", position: "Treasurer"},
-		{name: "Hazel O'Leary", position: "Musical Director"},
-		{name: "Helen Follett", position: "Events Coordinator"},
-		{name: "Michelle Mader", position: "Publicity Coordinator"},
-		{name: "George March", position: "Choir Liaison"},
-		{name: "Val H", position: "Music Librarian"},
-		{name: "Vanessa H", position: "Music Librarian"},
-	];
+	const committeeMembers = {"Committee": [
+		{name: "Jessica Craker", position: "Chairperson", img: "img/Jess_Craker.jpg"},
+		{name: "Trish Le Flufy", position: "Secretary", img: "img/trish.jpg"},
+		{name: "Mandy Larby", position: "Treasurer", img: "img/mandy.jpg"},
+		{name: "Helen Follett", position: "Events Coordinator", img: "img/helen.jpg"},
+		{name: "Michelle Mader", position: "Publicity Coordinator", img: "img/michelle.jpg"},
+		{name: "George March", position: "Choir Liaison", img: "img/george.jpg"},
+		// {name: "Val H", position: "Music Librarian"},
+		// {name: "Vanessa H", position: "Music Librarian"},
+	],
+	"Musical Directors": [
+		{name: "Hazel O'Leary", img: "img/Hazel_OLeary.jpg"},
+		{name: "Jessica Craker", img: "img/Jess_Craker.jpg"},
+	],
+	"Accompanist": [
+		{"name": "Paul Freeman", img: "img/paul.jpg"},
+	]};
 
 	const isMobile = mobileCheck()
 	// test2
@@ -27,17 +33,25 @@ function About({}) {
 			</div>
 
 			<div className="committee">
-				<h2>Committee</h2>
-				<div className="members">
-					{committeeMembers.map((member, index) => (
-						<CommitteeMember
-							key={index}
-							name={member.name}
-							position={member.position}
-							image={"img/profile_picture.webp"}
-						/>
-					))}
-				</div>
+				{
+					Object.keys(committeeMembers).map((committee, index) => {
+						return (
+							<React.Fragment key={index}>
+								<h2>{committee}</h2>
+								<div className="members">
+									{committeeMembers[committee].map((member, index2) => (
+										<CommitteeMember
+											key={index2}
+											name={member.name}
+											position={member.position}
+											image={member.img}
+										/>
+									))}
+								</div>
+							</React.Fragment>
+						)
+					})
+				}
 			</div>
 		</div>
 	)
@@ -51,7 +65,9 @@ function CommitteeMember({name, position, image}) {
 			</div>
 			<div className="text">
 				<h3>{name}</h3>
-				<h4>{position}</h4>
+				{
+					position ? <h4>{position}</h4> : null
+				}
 			</div>
 		</div>
 	)

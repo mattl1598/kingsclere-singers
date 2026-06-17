@@ -3,6 +3,7 @@
 @import "partials/events";
 @import "partials/history";
 @import "partials/about";
+@import "partials/icon";
 
 body {
 	background-color: #2b2b2b;
@@ -12,6 +13,9 @@ body {
 	padding: 0;
 	margin: 0;
 	overflow-x: hidden;
+
+	scroll-snap-type: y proximity;
+	scroll-behavior: smooth;
 }
 
 div.br {
@@ -36,4 +40,8 @@ div.snap {
 	scroll-snap-stop: always;
 
 	height: 100dvh;
+}
+
+div.about {
+	scroll-snap-stop: normal !important;
 }

@@ -1,3 +1,33 @@
+div.title_card.mobile {
+	div.logo {
+		img.logo {
+			height: 7.5rem !important;
+		}
+	}
+
+	div.contact {
+		flex-direction: column;
+		a {
+			font-size: 1rem;
+
+			svg.icon, div.react_icon > span {
+				font-size: inherit;
+				width: auto;
+				height: 2rem;
+				fill: white;
+			}
+
+			&.email {
+				div.react_icon {
+					width: 2rem;
+					height: 2rem;
+					font-size: 1.75rem;
+				}
+			}
+		}
+	}
+}
+
 div.title_card {
 	width: 100dvw;
 	height: 100dvh;
@@ -11,11 +41,32 @@ div.title_card {
 
 	overflow: hidden;
 
+	div.logo {
+		display: flex;
+		flex-direction: row;
+		flex-wrap: wrap;
+		gap: 0 1rem;
+
+		width: 100%;
+		height: auto;
+
+		justify-content: center;
+
+		img.logo {
+			filter: brightness(0) saturate(100%) invert(100%) sepia(0%) saturate(7107%) hue-rotate(32deg) brightness(120%) contrast(114%) url(#smooth-outline);
+			height: 15rem;
+		}
+	}
+
+	//img.logo {
+	//	max-width: 50dwh;
+	//}
+
 	&.mobile {
 		font-size: 50%;
 	}
 
-	div:has(img) {
+	div.group_photo:has(img) {
 		grid-area: 1 / 1 / 4 / 4;
 		column-span: 3;
 		row-span: 3;
@@ -76,5 +127,55 @@ div.title_card {
 		grid-area: 3 / 1 / 4 / 4;
 		z-index: 2;
 		place-self: end center;
+	}
+
+	div.contact {
+		display: flex;
+		flex-direction: row;
+		gap: 1em;
+		align-items: center;
+		justify-content: center;
+
+		a {
+			color: white;
+			text-decoration: none;
+			border-radius: 1000000rem;
+			display: flex;
+			gap: .5rem;
+			font-size: 2rem;
+			font-weight: bold;
+			padding-right: 1rem;
+			//padding-top: .5rem;
+			//padding-bottom: .5rem;
+
+			svg.icon, div.react_icon > span {
+				font-size: inherit;
+				width: auto;
+				height: 4rem;
+				fill: white;
+			}
+
+			> span {
+				margin: auto;
+			}
+
+			&.email {
+				background-color: #de4f4a;
+				div.react_icon {
+					background-color: #d93734;
+					border-radius: 1000000rem;
+					width: 4rem;
+					height: 4rem;
+					font-size: 3.5rem;
+					span {
+						margin: auto;
+						height: initial;
+					}
+				}
+			}
+			&.facebook {
+				background-color: #0060fb;
+			}
+		}
 	}
 }

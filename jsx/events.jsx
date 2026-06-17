@@ -3,8 +3,8 @@ function Events({}) {
 	const [events, setEvents] = React.useState([])
 	const [current, setCurrent] = React.useState(0);
 
-	const calendarID = "silchesterplayers@gmail.com"
-	const apiKey = "AIzaSyC6CR2FdJB6KeujubYP42FFh74DIR1IiXg"
+	const calendarID = "5ed625756269cf77deab7070dd37ddc88d865b92dab32ebfc77eb0ff0bd7e8ac@group.calendar.google.com"
+	const apiKey = "AIzaSyCxXc28FCub4QScbrWUkaL9Ml13xx2qJl4"
 
 	const count = events.length;
 
@@ -20,9 +20,10 @@ function Events({}) {
 			response => response.json()
 		).then(
 			(data) => {
+				console.log(data)
 				let tempEvents = []
 				data.items.forEach((event, i) => {
-					if (event.status === "confirmed" && !event.summary.toLowerCase().includes("rehearsal") && !event.summary.toLowerCase().includes("set") && !event.summary.toLowerCase().includes("charity")) {
+					if (event.status === "confirmed" && new Date(event.start.dateTime) > Date.now() ) {
 						tempEvents.push(event)
 					}
 				})
@@ -33,7 +34,6 @@ function Events({}) {
 	}, [])
 
 	React.useEffect(() => {
-		console.log(eventsJson)
 		let tempEvents = []
 		eventsJson.forEach((event, i) => {
 			tempEvents.push(<Event event={event} apiKey={apiKey} index={i} key={i} isMobile={isMobile}/>)
@@ -42,7 +42,6 @@ function Events({}) {
 	}, [eventsJson])
 
 	React.useEffect(() => {
-		console.log(current)
 		if (events.length) {
 			document.querySelector(`#event_${current}`).scrollIntoView({behavior: "smooth", container: "nearest"})
 		}
@@ -88,14 +87,14 @@ function Event({event, apiKey, index, isMobile}) {
 		if (isMobile) {
 			return (
 				<div className="poster">
-					{/*<img src={getAttachmentUrl(event.attachments[0].fileUrl)} alt={`Poster for ${event.summary}`}/>*/}
-					<img onLoad={onLoad} ref={imgRef} src={"/img/poster1.webp"} alt={`Poster for ${event.summary}`}/>
+					<img src={getAttachmentUrl(event.attachments[0].fileUrl)} alt={`Poster for ${event.summary}`}/>
+					{/*<img onLoad={onLoad} ref={imgRef} src={"/img/poster1.webp"} alt={`Poster for ${event.summary}`}/>*/}
 				</div>
 			)
 		} else {
 			return (
-				// <img src={getAttachmentUrl(event.attachments[0].fileUrl)} alt={`Poster for ${event.summary}`}/>
-				<img onLoad={onLoad} ref={imgRef} src={"/img/poster1.webp"} alt={`Poster for ${event.summary}`}/>
+				<img src={getAttachmentUrl(event.attachments[0].fileUrl)} alt={`Poster for ${event.summary}`}/>
+				// <img onLoad={onLoad} ref={imgRef} src={"/img/poster1.webp"} alt={`Poster for ${event.summary}`}/>
 			)
 		}
 	}
@@ -109,14 +108,19 @@ function Event({event, apiKey, index, isMobile}) {
 				<div className="time">
 					<h2>{formatDateWithOrdinal(event.start.dateTime)}</h2>
 				</div>
-				<div className="location">
-					<a
-						href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(event.location)}`}
-						target={"_blank"}
-					>
-						<h3>{event.location.split(", ")[0]}</h3>
-					</a>
-				</div>
+
+				{
+					event.location ?
+					<div className="location">
+						<a
+							href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(event.location)}`}
+							target={"_blank"}
+						>
+							<h3>{event.location.split(", ")[0]}</h3>
+						</a>
+					</div> : null
+				}
+
 				<div className="description">
 					<Markdown content={event.description}></Markdown>
 				</div>
