@@ -1,3 +1,24 @@
+div.title_card.mobile div.logo img.logo {
+  height: 7.5rem !important;
+}
+div.title_card.mobile div.contact {
+  flex-direction: column;
+}
+div.title_card.mobile div.contact a {
+  font-size: 1rem;
+}
+div.title_card.mobile div.contact a svg.icon, div.title_card.mobile div.contact a div.react_icon > span {
+  font-size: inherit;
+  width: auto;
+  height: 2rem;
+  fill: white;
+}
+div.title_card.mobile div.contact a.email div.react_icon {
+  width: 2rem;
+  height: 2rem;
+  font-size: 1.75rem;
+}
+
 div.title_card {
   width: 100dvw;
   height: 100dvh;
@@ -7,17 +28,30 @@ div.title_card {
   place-items: center;
   overflow: hidden;
 }
+div.title_card div.logo {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 0 1rem;
+  width: 100%;
+  height: auto;
+  justify-content: center;
+}
+div.title_card div.logo img.logo {
+  filter: brightness(0) saturate(100%) invert(100%) sepia(0%) saturate(7107%) hue-rotate(32deg) brightness(120%) contrast(114%) url(#smooth-outline);
+  height: 15rem;
+}
 div.title_card.mobile {
   font-size: 50%;
 }
-div.title_card div:has(img) {
+div.title_card div.group_photo:has(img) {
   grid-area: 1/1/4/4;
   column-span: 3;
   row-span: 3;
   z-index: 1;
   place-self: stretch;
 }
-div.title_card div:has(img) img {
+div.title_card div.group_photo:has(img) img {
   height: 100%;
   width: 100%;
   place-self: stretch;
@@ -42,6 +76,49 @@ div.title_card nav {
   grid-area: 3/1/4/4;
   z-index: 2;
   place-self: end center;
+}
+div.title_card div.contact {
+  display: flex;
+  flex-direction: row;
+  gap: 1em;
+  align-items: center;
+  justify-content: center;
+}
+div.title_card div.contact a {
+  color: white;
+  text-decoration: none;
+  border-radius: 1000000rem;
+  display: flex;
+  gap: 0.5rem;
+  font-size: 2rem;
+  font-weight: bold;
+  padding-right: 1rem;
+}
+div.title_card div.contact a svg.icon, div.title_card div.contact a div.react_icon > span {
+  font-size: inherit;
+  width: auto;
+  height: 4rem;
+  fill: white;
+}
+div.title_card div.contact a > span {
+  margin: auto;
+}
+div.title_card div.contact a.email {
+  background-color: #de4f4a;
+}
+div.title_card div.contact a.email div.react_icon {
+  background-color: #d93734;
+  border-radius: 1000000rem;
+  width: 4rem;
+  height: 4rem;
+  font-size: 3.5rem;
+}
+div.title_card div.contact a.email div.react_icon span {
+  margin: auto;
+  height: initial;
+}
+div.title_card div.contact a.facebook {
+  background-color: #0060fb;
 }
 
 nav {
@@ -254,6 +331,15 @@ div.about:not(.mobile) {
 div.about.mobile {
   padding: 0.5rem 1rem;
 }
+div.about {
+  scroll-snap-stop: normal !important;
+  height: fit-content !important;
+  min-height: 100dvh !important;
+}
+
+div.about div.committee h2 {
+  text-align: center;
+}
 
 div.about:not(.mobile) div.committee > div.members {
   display: flex;
@@ -281,6 +367,7 @@ div.about:not(.mobile) div.committee > div.members div.member {
   flex-shrink: 0;
 }
 .member .image img {
+  aspect-ratio: 1;
   height: 3.5em;
   border-radius: 50%;
   object-fit: cover;
@@ -302,6 +389,14 @@ div.about:not(.mobile) div.committee > div.members div.member {
   color: #bbb;
 }
 
+div.react_icon {
+  display: grid;
+  place-items: center;
+}
+div.react_icon span.filled {
+  font-variation-settings: "FILL" 1;
+}
+
 body {
   background-color: #2b2b2b;
   color: #fff;
@@ -309,6 +404,8 @@ body {
   padding: 0;
   margin: 0;
   overflow-x: hidden;
+  scroll-snap-type: y proximity;
+  scroll-behavior: smooth;
 }
 
 div.br {
@@ -334,4 +431,8 @@ div.snap {
   scroll-snap-align: start;
   scroll-snap-stop: always;
   height: 100dvh;
+}
+
+div.about {
+  scroll-snap-stop: normal !important;
 }
