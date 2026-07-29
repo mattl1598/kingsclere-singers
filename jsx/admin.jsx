@@ -1,5 +1,5 @@
 if (window.location.pathname === "/admin") {
-	const adminApp = document.getElementById('app');
+	const adminApp = document.getElementById('admin_app');
 	const adminAppRoot = ReactDOM.createRoot(adminApp);
 	adminAppRoot.render(
 		<Admin></Admin>
