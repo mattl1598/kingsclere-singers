@@ -2,27 +2,8 @@ import { jsxDEV as _jsxDEV } from "react/jsx-dev-runtime";
 function About({
   content
 }) {
-  // const committeeMembers = {"Committee": [
-  // 	{name: "Jessica Craker", position: "Chairperson", img: "img/Jess_Craker.jpg"},
-  // 	{name: "Trish Le Flufy", position: "Secretary", img: "img/trish.jpg"},
-  // 	{name: "Mandy Larby", position: "Treasurer", img: "img/mandy.jpg"},
-  // 	{name: "Helen Follett", position: "Events Coordinator", img: "img/helen.jpg"},
-  // 	{name: "Michelle Mader", position: "Publicity Coordinator", img: "img/michelle.jpg"},
-  // 	{name: "George March", position: "Choir Liaison", img: "img/george.jpg"},
-  // 	// {name: "Val H", position: "Music Librarian"},
-  // 	// {name: "Vanessa H", position: "Music Librarian"},
-  // ],
-  // "Musical Directors": [
-  // 	{name: "Hazel O'Leary", img: "img/Hazel_OLeary.jpg"},
-  // 	{name: "Jessica Craker", img: "img/Jess_Craker.jpg"},
-  // ],
-  // "Accompanist": [
-  // 	{"name": "Paul Freeman", img: "img/paul.jpg"},
-  // ]};
-
   const committeeMembers = content.committeeMembers;
   const isMobile = mobileCheck();
-  // test2
   return /*#__PURE__*/_jsxDEV("div", {
     id: "about",
     className: `about snap ${isMobile ? "mobile" : ""}`,
