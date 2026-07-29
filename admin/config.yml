@@ -1,0 +1,45 @@
+backend:
+  name: github
+  repo: mattl1598/kingsclere-singers # Path to your GitHub repository
+  # optional, defaults to master
+  # branch: main
+
+media_folder: img
+
+collections:
+  - name: events
+    label: Events
+    folder: content/events
+    createType: "file"
+    fields:
+      - { label: "Title", name: "title", type: "text", required: true }
+      - { label: "Date", name: "date", type: "datetime" }
+      - { label: "Location", name: "location", type: "text" }
+      - { label: "Description", name: "description", type: "markdown" }
+      - { label: "Poster Image", name: "image", type: "media", file_refs: ["img"] }
+
+  - name: history
+    label: History Timeline
+    folder: content/history
+    createType: "file"
+    fields:
+      - { label: "Year", name: "year", type: "number", required: true }
+      - { label: "Description", name: "description", type: "markdown" }
+
+  - name: members
+    label: Members (Committee)
+    folder: content/members
+    createType: "file"
+    fields:
+      - { label: "Name", name: "name", type: "text", required: true }
+      - { label: "Role", name: "role", type: "text" }
+      - { label: "Profile Image", name: "image", type: "media", file_refs: ["img"] }
+
+  - name: site_settings
+    label: Site Settings
+    folder: content/settings
+    createType: "file"
+    fields:
+      - { label: "Facebook URL", name: "facebook_url", type: "text" }
+      - { label: "Email", name: "email", type: "text" }
+      - { label: "Site Description", name: "description", type: "textarea" }
