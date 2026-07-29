@@ -58,9 +58,11 @@ function CommitteeMember({
   }, void 0, true);
 }
 import { jsxDEV as _jsxDEV } from "react/jsx-dev-runtime";
-const app = document.getElementById('app');
-const appRoot = ReactDOM.createRoot(app);
-appRoot.render(/*#__PURE__*/_jsxDEV(Admin, {}, void 0, false));
+if (window.location.pathname === "/admin") {
+  const adminApp = document.getElementById('app');
+  const adminAppRoot = ReactDOM.createRoot(adminApp);
+  adminAppRoot.render(/*#__PURE__*/_jsxDEV(Admin, {}, void 0, false));
+}
 function Admin({}) {
   const [content, setContent] = React.useState(null);
   const [status, setStatus] = React.useState('');
