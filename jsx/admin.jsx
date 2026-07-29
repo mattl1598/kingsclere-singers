@@ -1,9 +1,10 @@
-
-const app = document.getElementById('app');
-const appRoot = ReactDOM.createRoot(app);
-appRoot.render(
-	<Admin></Admin>
-);
+if (window.location.pathname === "/admin") {
+	const adminApp = document.getElementById('app');
+	const adminAppRoot = ReactDOM.createRoot(adminApp);
+	adminAppRoot.render(
+		<Admin></Admin>
+	);
+}
 
 function Admin({}) {
 	const [content, setContent] = React.useState(null);
