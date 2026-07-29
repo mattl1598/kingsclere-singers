@@ -1,46 +1,26 @@
 import { jsxDEV as _jsxDEV } from "react/jsx-dev-runtime";
-function About({}) {
-  const committeeMembers = {
-    "Committee": [{
-      name: "Jessica Craker",
-      position: "Chairperson",
-      img: "img/Jess_Craker.jpg"
-    }, {
-      name: "Trish Le Flufy",
-      position: "Secretary",
-      img: "img/trish.jpg"
-    }, {
-      name: "Mandy Larby",
-      position: "Treasurer",
-      img: "img/mandy.jpg"
-    }, {
-      name: "Helen Follett",
-      position: "Events Coordinator",
-      img: "img/helen.jpg"
-    }, {
-      name: "Michelle Mader",
-      position: "Publicity Coordinator",
-      img: "img/michelle.jpg"
-    }, {
-      name: "George March",
-      position: "Choir Liaison",
-      img: "img/george.jpg"
-    }
-    // {name: "Val H", position: "Music Librarian"},
-    // {name: "Vanessa H", position: "Music Librarian"},
-    ],
-    "Musical Directors": [{
-      name: "Hazel O'Leary",
-      img: "img/Hazel_OLeary.jpg"
-    }, {
-      name: "Jessica Craker",
-      img: "img/Jess_Craker.jpg"
-    }],
-    "Accompanist": [{
-      "name": "Paul Freeman",
-      img: "img/paul.jpg"
-    }]
-  };
+function About({
+  content
+}) {
+  // const committeeMembers = {"Committee": [
+  // 	{name: "Jessica Craker", position: "Chairperson", img: "img/Jess_Craker.jpg"},
+  // 	{name: "Trish Le Flufy", position: "Secretary", img: "img/trish.jpg"},
+  // 	{name: "Mandy Larby", position: "Treasurer", img: "img/mandy.jpg"},
+  // 	{name: "Helen Follett", position: "Events Coordinator", img: "img/helen.jpg"},
+  // 	{name: "Michelle Mader", position: "Publicity Coordinator", img: "img/michelle.jpg"},
+  // 	{name: "George March", position: "Choir Liaison", img: "img/george.jpg"},
+  // 	// {name: "Val H", position: "Music Librarian"},
+  // 	// {name: "Vanessa H", position: "Music Librarian"},
+  // ],
+  // "Musical Directors": [
+  // 	{name: "Hazel O'Leary", img: "img/Hazel_OLeary.jpg"},
+  // 	{name: "Jessica Craker", img: "img/Jess_Craker.jpg"},
+  // ],
+  // "Accompanist": [
+  // 	{"name": "Paul Freeman", img: "img/paul.jpg"},
+  // ]};
+
+  const committeeMembers = content.committeeMembers;
   const isMobile = mobileCheck();
   // test2
   return /*#__PURE__*/_jsxDEV("div", {
@@ -51,12 +31,10 @@ function About({}) {
       children: "About Kingsclere Singers"
     }, void 0, false), /*#__PURE__*/_jsxDEV("div", {
       className: "spiel",
-      children: [/*#__PURE__*/_jsxDEV("p", {
-        children: "Kingsclere Singers is a group of people who are passionate about music and singing. We meet most Mondays at the Fieldgate Centre, Field Gate Drive, Kingsclere, RG20 5SQ."
-      }, void 0, false), /*#__PURE__*/_jsxDEV("p", {
-        children: "We love singing and know you will to - drop in if you are at all interested."
-      }, void 0, false)]
-    }, void 0, true), /*#__PURE__*/_jsxDEV("div", {
+      children: /*#__PURE__*/_jsxDEV(Markdown, {
+        content: content.about
+      }, void 0, false)
+    }, void 0, false), /*#__PURE__*/_jsxDEV("div", {
       className: "committee",
       children: Object.keys(committeeMembers).map((committee, index) => {
         return /*#__PURE__*/_jsxDEV(React.Fragment, {
@@ -101,8 +79,192 @@ function CommitteeMember({
 import { jsxDEV as _jsxDEV } from "react/jsx-dev-runtime";
 const app = document.getElementById('app');
 const appRoot = ReactDOM.createRoot(app);
+appRoot.render(/*#__PURE__*/_jsxDEV(Admin, {}, void 0, false));
+function Admin({}) {
+  const [content, setContent] = React.useState(null);
+  const [status, setStatus] = React.useState('');
+  React.useEffect(() => {
+    fetch("/content.json").then(response => response.json()).then(data => setContent(data)).catch(err => console.error("Failed to load content:", err));
+  }, []);
+  const handleChange = e => {
+    const {
+      name,
+      value
+    } = e.target;
+    let newContent = {
+      ...content
+    };
+
+    // Handle nested paths like "fb.link" or "committeeMembers.Committee[0].name"
+    const keys = name.split(/[.[\]]+/).filter(Boolean);
+    let current = newContent;
+    for (let i = 0; i < keys.length - 1; i++) {
+      const key = keys[i];
+      if (key.match(/^\d+$/)) {
+        current = current[parseInt(key)];
+      } else {
+        current = current[key];
+      }
+    }
+    const lastKey = keys[keys.length - 1];
+    current[lastKey] = value;
+    setContent(newContent);
+  };
+  const handleSave = async e => {
+    e.preventDefault();
+    setStatus('Saving...');
+    try {
+      const response = await fetch('/api/content', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(content)
+      });
+      if (response.ok) {
+        setStatus('Changes saved successfully!');
+        setTimeout(() => setStatus(''), 3000);
+      } else {
+        setStatus('Error saving content.');
+      }
+    } catch (err) {
+      setStatus('Server error.');
+    }
+  };
+  if (!content) return /*#__PURE__*/_jsxDEV("div", {
+    className: "admin",
+    children: "Loading content..."
+  }, void 0, false);
+  return /*#__PURE__*/_jsxDEV("div", {
+    className: "admin",
+    children: [/*#__PURE__*/_jsxDEV("h1", {
+      className: "admin-title",
+      children: "Content Management"
+    }, void 0, false), /*#__PURE__*/_jsxDEV("form", {
+      onSubmit: handleSave,
+      className: "admin-form",
+      children: [/*#__PURE__*/_jsxDEV("section", {
+        className: "admin-section",
+        children: [/*#__PURE__*/_jsxDEV("h2", {
+          children: "About Us"
+        }, void 0, false), /*#__PURE__*/_jsxDEV("textarea", {
+          name: "about",
+          value: content.about,
+          onChange: handleChange,
+          className: "admin-textarea",
+          rows: "8",
+          placeholder: "Enter the about description..."
+        }, void 0, false)]
+      }, void 0, true), /*#__PURE__*/_jsxDEV("section", {
+        className: "admin-section",
+        children: [/*#__PURE__*/_jsxDEV("h2", {
+          children: "Social Media"
+        }, void 0, false), /*#__PURE__*/_jsxDEV("div", {
+          className: "admin-row",
+          children: [/*#__PURE__*/_jsxDEV("div", {
+            className: "admin-field",
+            children: [/*#__PURE__*/_jsxDEV("label", {
+              children: "Facebook Link"
+            }, void 0, false), /*#__PURE__*/_jsxDEV("input", {
+              name: "fb.link",
+              type: "text",
+              value: content.fb.link,
+              onChange: handleChange
+            }, void 0, false)]
+          }, void 0, true), /*#__PURE__*/_jsxDEV("div", {
+            className: "admin-field",
+            children: [/*#__PURE__*/_jsxDEV("label", {
+              children: "Facebook Display Text"
+            }, void 0, false), /*#__PURE__*/_jsxDEV("input", {
+              name: "fb.text",
+              type: "text",
+              value: content.fb.text,
+              onChange: handleChange
+            }, void 0, false)]
+          }, void 0, true)]
+        }, void 0, true), /*#__PURE__*/_jsxDEV("div", {
+          className: "admin-row",
+          children: /*#__PURE__*/_jsxDEV("div", {
+            className: "admin-field",
+            children: [/*#__PURE__*/_jsxDEV("label", {
+              children: "Email Address"
+            }, void 0, false), /*#__PURE__*/_jsxDEV("input", {
+              name: "email.address",
+              type: "email",
+              value: content.email.address,
+              onChange: handleChange
+            }, void 0, false)]
+          }, void 0, true)
+        }, void 0, false)]
+      }, void 0, true), /*#__PURE__*/_jsxDEV("section", {
+        className: "admin-section",
+        children: [/*#__PURE__*/_jsxDEV("h2", {
+          children: "Committee Members"
+        }, void 0, false), Object.keys(content.committeeMembers).map(category => /*#__PURE__*/_jsxDEV("div", {
+          className: "admin-category",
+          children: [/*#__PURE__*/_jsxDEV("h3", {
+            children: category
+          }, void 0, false), content.committeeMembers[category].map((member, mIdx) => /*#__PURE__*/_jsxDEV("div", {
+            className: "admin-row",
+            children: [/*#__PURE__*/_jsxDEV("div", {
+              className: "admin-field",
+              children: [/*#__PURE__*/_jsxDEV("label", {
+                children: "Name"
+              }, void 0, false), /*#__PURE__*/_jsxDEV("input", {
+                name: `committeeMembers.${category}[${mIdx}].name`,
+                value: member.name,
+                onChange: handleChange
+              }, void 0, false)]
+            }, void 0, true), /*#__PURE__*/_jsxDEV("div", {
+              className: "admin-field",
+              children: [/*#__PURE__*/_jsxDEV("label", {
+                children: "Position"
+              }, void 0, false), /*#__PURE__*/_jsxDEV("input", {
+                name: `committeeMembers.${category}[${mIdx}].position`,
+                value: member.position || '',
+                onChange: handleChange
+              }, void 0, false)]
+            }, void 0, true), /*#__PURE__*/_jsxDEV("div", {
+              className: "admin-field",
+              children: [/*#__PURE__*/_jsxDEV("label", {
+                children: "Image Path"
+              }, void 0, false), /*#__PURE__*/_jsxDEV("input", {
+                name: `committeeMembers.${category}[${mIdx}].img`,
+                value: member.img,
+                onChange: handleChange
+              }, void 0, false)]
+            }, void 0, true)]
+          }, mIdx, true))]
+        }, category, true))]
+      }, void 0, true), /*#__PURE__*/_jsxDEV("div", {
+        className: "admin-actions",
+        children: [/*#__PURE__*/_jsxDEV("button", {
+          type: "submit",
+          className: "admin-save-btn",
+          children: "Save All Changes"
+        }, void 0, false), status && /*#__PURE__*/_jsxDEV("p", {
+          className: "admin-status",
+          children: status
+        }, void 0, false)]
+      }, void 0, true)]
+    }, void 0, true)]
+  }, void 0, true);
+}
+import { jsxDEV as _jsxDEV } from "react/jsx-dev-runtime";
+const app = document.getElementById('app');
+const appRoot = ReactDOM.createRoot(app);
 appRoot.render(/*#__PURE__*/_jsxDEV(App, {}, void 0, false));
 function App({}) {
+  const [content, setContent] = React.useState(null);
+  React.useEffect(() => {
+    fetch("/content.json").then(response => response.json()).then(data => {
+      setContent(data);
+    });
+  }, []);
+  if (!content) return /*#__PURE__*/_jsxDEV("div", {
+    className: "loading",
+    children: "Loading..."
+  }, void 0, false);
   return /*#__PURE__*/_jsxDEV(React.Fragment, {
     children: [/*#__PURE__*/_jsxDEV("div", {
       className: `title_card snap ${mobileCheck() ? "mobile" : ""}`,
@@ -161,33 +323,35 @@ function App({}) {
           style: {
             filter: "url(#smooth-outline)"
           },
-          children: "Mondays 7.30pm at Kingsclere Fieldgate Centre"
+          children: content.rehearsalDetails
         }, void 0, false), /*#__PURE__*/_jsxDEV("div", {
           className: "contact",
           children: [/*#__PURE__*/_jsxDEV("a", {
-            href: "https://www.facebook.com/profile.php?id=61577114150948",
+            href: content.fb.link,
             className: "facebook",
             target: "_blank",
             children: [/*#__PURE__*/_jsxDEV(Icon, {
-              icon: "facebook"
+              icon: content.fb.icon
             }, void 0, false), /*#__PURE__*/_jsxDEV("span", {
               className: "linkText",
-              children: "Facebook"
+              children: content.fb.text
             }, void 0, false)]
           }, void 0, true), /*#__PURE__*/_jsxDEV("a", {
-            href: "mailto:kingscleresingers@gmail.com",
+            href: `mailto:${content.email.address}`,
             className: "email",
             target: "_blank",
             children: [/*#__PURE__*/_jsxDEV(Icon, {
-              children: "alternate_email"
+              children: content.email.icon
             }, void 0, false), /*#__PURE__*/_jsxDEV("span", {
               className: "linkText",
-              children: "kingscleresingers@gmail.com"
+              children: content.email.address
             }, void 0, false)]
           }, void 0, true)]
         }, void 0, true)]
       }, void 0, true), /*#__PURE__*/_jsxDEV(Nav, {}, void 0, false)]
-    }, void 0, true), /*#__PURE__*/_jsxDEV(Events, {}, void 0, false), /*#__PURE__*/_jsxDEV(About, {}, void 0, false)]
+    }, void 0, true), /*#__PURE__*/_jsxDEV(Events, {}, void 0, false), /*#__PURE__*/_jsxDEV(About, {
+      content: content
+    }, void 0, false)]
   }, void 0, true);
 }
 import { jsxDEV as _jsxDEV } from "react/jsx-dev-runtime";
