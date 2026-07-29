@@ -59,6 +59,21 @@ def photo3():
 	return send_file('img/profile_picture.webp')
 
 
+@app.get("/admin/config.yml")
+def config():
+	return send_file('admin/config.yml')
+
+
+@app.get("/admin/index.html")
+def admin():
+	return send_file('admin/index.html')
+
+
+@app.get("/content/<folder>/<file>")
+def admin_file(folder, file):
+	return send_from_directory(f"admin/{folder}", file)
+
+
 if __name__ == '__main__':
 	# This will create the database if it doesn't already exist.
 	app.run(host='0.0.0.0')

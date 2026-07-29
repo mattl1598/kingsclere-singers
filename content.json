@@ -1,0 +1,23 @@
+{
+	"committeeMembers": {
+		"Committee": [
+			{"name": "Jessica Craker", "position": "Chairperson", "img": "img/Jess_Craker.jpg"},
+			{"name": "Trish Le Flufy", "position": "Secretary", "img": "img/trish.jpg"},
+			{"name": "Mandy Larby", "position": "Treasurer", "img": "img/mandy.jpg"},
+			{"name": "Helen Follett", "position": "Events Coordinator", "img": "img/helen.jpg"},
+			{"name": "Michelle Mader", "position": "Publicity Coordinator", "img": "img/michelle.jpg"},
+			{"name": "George March", "position": "Choir Liaison", "img": "img/george.jpg"}
+		],
+		"Musical Directors": [
+			{"name": "Hazel O'Leary", "img": "img/Hazel_OLeary.jpg"},
+			{"name": "Jessica Craker", "img": "img/Jess_Craker.jpg"}
+		],
+		"Accompanist": [
+			{"name": "Paul Freeman", "img": "img/paul.jpg"}
+		]
+	},
+	"rehearsalDetails": "Mondays 7.30pm at Kingsclere Fieldgate Centre",
+	"about": "Kingsclere Singers is a group of people who are passionate about music and singing.\n\nWe meet most Mondays at the Fieldgate Centre, Field Gate Drive, Kingsclere, RG20 5SQ.\n\nWe love singing and know you will to - drop in if you are at all interested.",
+	"fb": {"link": "https://www.facebook.com/profile.php?id=61577114150948", "text": "Facebook", "icon": "facebook"},
+	"email": {"address": "kingscleresingers@gmail.com", "icon": "alternate_email"}
+}

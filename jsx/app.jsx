@@ -5,6 +5,16 @@ appRoot.render(
 );
 
 function App({}) {
+	const [content, setContent] = React.useState(null)
+
+	React.useEffect(() => {
+		fetch("/content.json").then(response => response.json()).then(data => {
+			setContent(data)
+		})
+	}, [])
+
+	if (!content) return <div className="loading">Loading...</div>
+
 	return (
 		<React.Fragment>
 			<div className={`title_card snap ${mobileCheck() ? "mobile" : ""}`} id="home">
@@ -32,22 +42,22 @@ function App({}) {
 						<img className={"logo"} src={"/img/logoA.svg"}></img>
 						<img className={"logo"} src={"/img/logoB.svg"}></img>
 					</div>
-					<h2 style={{filter: "url(#smooth-outline)"}}>Mondays 7.30pm at Kingsclere Fieldgate Centre</h2>
+					<h2 style={{filter: "url(#smooth-outline)"}}>{content.rehearsalDetails}</h2>
 					<div className="contact">
-						<a href={"https://www.facebook.com/profile.php?id=61577114150948"} className={"facebook"} target={"_blank"}>
-							<Icon icon={"facebook"}></Icon>
-							<span className="linkText">Facebook</span>
+						<a href={content.fb.link} className={"facebook"} target={"_blank"}>
+							<Icon icon={content.fb.icon}></Icon>
+							<span className="linkText">{content.fb.text}</span>
 						</a>
-						<a href={"mailto:kingscleresingers@gmail.com"} className={"email"} target={"_blank"}>
-							<Icon>alternate_email</Icon>
-							<span className="linkText">kingscleresingers@gmail.com</span>
+						<a href={`mailto:${content.email.address}`} className={"email"} target={"_blank"}>
+							<Icon>{content.email.icon}</Icon>
+							<span className="linkText">{content.email.address}</span>
 						</a>
 					</div>
 				</div>
 				<Nav></Nav>
 			</div>
 			<Events></Events>
-			<About></About>
+			<About content={content}></About>
 		</React.Fragment>
 	)
 }

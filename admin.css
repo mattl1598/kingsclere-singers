@@ -1,0 +1,87 @@
+/* Admin Page Styling */
+.admin {
+    max-width: 800px;
+    margin: 40px auto;
+    padding: 20px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: #f9f9f9;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.admin-title {
+    text-align: center;
+    color: #333;
+    margin-bottom: 30px;
+}
+
+.admin-section {
+    margin-bottom: 30px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid #ddd;
+}
+
+.admin-section h2 {
+    margin-top: 0;
+    color: #555;
+    font-size: 1.2rem;
+}
+
+.admin-textarea {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 1rem;
+    resize: vertical;
+}
+
+.admin-row {
+    display: flex;
+    gap: 20px;
+    margin-bottom: 15px;
+}
+
+.admin-field {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+}
+
+.admin-field label {
+    font-size: 0.9rem;
+    margin-bottom: 5px;
+    color: #666;
+}
+
+.admin-field input {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.admin-actions {
+    text-align: center;
+    margin-top: 20px;
+}
+
+.admin-save-btn {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 12px 30px;
+    border-radius: 4px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.admin-save-btn:hover {
+    background-color: #0056b3;
+}
+
+.admin-status {
+    margin-top: 15px;
+    font-weight: bold;
+    color: #28a745;
+}

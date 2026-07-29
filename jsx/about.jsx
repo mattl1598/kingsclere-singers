@@ -1,21 +1,23 @@
-function About({}) {
-	const committeeMembers = {"Committee": [
-		{name: "Jessica Craker", position: "Chairperson", img: "img/Jess_Craker.jpg"},
-		{name: "Trish Le Flufy", position: "Secretary", img: "img/trish.jpg"},
-		{name: "Mandy Larby", position: "Treasurer", img: "img/mandy.jpg"},
-		{name: "Helen Follett", position: "Events Coordinator", img: "img/helen.jpg"},
-		{name: "Michelle Mader", position: "Publicity Coordinator", img: "img/michelle.jpg"},
-		{name: "George March", position: "Choir Liaison", img: "img/george.jpg"},
-		// {name: "Val H", position: "Music Librarian"},
-		// {name: "Vanessa H", position: "Music Librarian"},
-	],
-	"Musical Directors": [
-		{name: "Hazel O'Leary", img: "img/Hazel_OLeary.jpg"},
-		{name: "Jessica Craker", img: "img/Jess_Craker.jpg"},
-	],
-	"Accompanist": [
-		{"name": "Paul Freeman", img: "img/paul.jpg"},
-	]};
+function About({content}) {
+	// const committeeMembers = {"Committee": [
+	// 	{name: "Jessica Craker", position: "Chairperson", img: "img/Jess_Craker.jpg"},
+	// 	{name: "Trish Le Flufy", position: "Secretary", img: "img/trish.jpg"},
+	// 	{name: "Mandy Larby", position: "Treasurer", img: "img/mandy.jpg"},
+	// 	{name: "Helen Follett", position: "Events Coordinator", img: "img/helen.jpg"},
+	// 	{name: "Michelle Mader", position: "Publicity Coordinator", img: "img/michelle.jpg"},
+	// 	{name: "George March", position: "Choir Liaison", img: "img/george.jpg"},
+	// 	// {name: "Val H", position: "Music Librarian"},
+	// 	// {name: "Vanessa H", position: "Music Librarian"},
+	// ],
+	// "Musical Directors": [
+	// 	{name: "Hazel O'Leary", img: "img/Hazel_OLeary.jpg"},
+	// 	{name: "Jessica Craker", img: "img/Jess_Craker.jpg"},
+	// ],
+	// "Accompanist": [
+	// 	{"name": "Paul Freeman", img: "img/paul.jpg"},
+	// ]};
+
+	const committeeMembers = content.committeeMembers;
 
 	const isMobile = mobileCheck()
 	// test2
@@ -23,13 +25,7 @@ function About({}) {
 		<div id={"about"} className={`about snap ${isMobile ? "mobile" : ""}`}>
 			<h1 className={"title"}>About Kingsclere Singers</h1>
 			<div className="spiel">
-				<p>
-					Kingsclere Singers is a group of people who are passionate about music and singing.
-					We meet most Mondays at the Fieldgate Centre, Field Gate Drive, Kingsclere, RG20 5SQ.
-				</p>
-				<p>
-					We love singing and know you will to - drop in if you are at all interested.
-				</p>
+				<Markdown content={content.about} />
 			</div>
 
 			<div className="committee">
