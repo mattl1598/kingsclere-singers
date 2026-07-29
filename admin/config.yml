@@ -37,9 +37,15 @@ collections:
 
   - name: site_settings
     label: Site Settings
-    folder: content/settings
+    folder: singers/content/settings
     createType: "file"
     fields:
       - { label: "Facebook URL", name: "facebook_url", type: "text" }
       - { label: "Email", name: "email", type: "text" }
       - { label: "Site Description", name: "description", type: "textarea" }
+  - name: test
+    label: Test
+    folder: singers/content/test
+    createType: "file"
+    fields:
+      - { label: "Test Field", name: "test_field", type: "text" }
