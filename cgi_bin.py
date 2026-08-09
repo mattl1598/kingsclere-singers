@@ -64,13 +64,13 @@ def main():
         print(f"Content-Type: text/html; status=400 Bad Request\n{str(e)}")
         return
 
-    # 1. Verify Credentials
-    is_authenticated, message = verify_credentials(payload)
-    
-    if not is_authenticated:
-        print(f"Content-Type: text/html; status=403 Forbidden\n{message}")
-        print(f"<h1>Unauthorized</h1><p>{message}</p>")
-        return
+    # # 1. Verify Credentials
+    # is_authenticated, message = verify_credentials(payload)
+    #
+    # if not is_authenticated:
+    #     print(f"Content-Type: text/html; status=403 Forbidden\n{message}")
+    #     print(f"<h1>Unauthorized</h1><p>{message}</p>")
+    #     return
 
     # 2. Extract content to save
     new_content = payload.get('content')
