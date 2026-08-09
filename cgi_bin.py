@@ -69,7 +69,7 @@ def main():
     
     if not is_authenticated:
         print(f"Content-Type: text/html; status=403 Forbidden\n{message}")
-        sys.stdout.write("<h1>Unauthorized</h1><p>" + message + "</p>")
+        print(f"<h1>Unauthorized</h1><p>{message}</p>")
         return
 
     # 2. Extract content to save
