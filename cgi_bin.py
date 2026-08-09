@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
 # import cgi
-# import cgitb
+import cgitb
 import json
 import os
 import sys
 
-# cgitb.enable()
+cgitb.enable()
 
 # Configuration for authentication (in a real app, this would come from env vars or config files)
 ALLOWED_PASSWORD = "admin_secret_password" 
