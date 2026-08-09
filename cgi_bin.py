@@ -1,10 +1,28 @@
 #!/var/www/kingsclere-singers/.venv/bin/python
+import hmac
 import json
 import os
 import sys
 import traceback
 
-ALLOWED_PASSWORD = "admin_secret_password"
+import pyotp
+
+
+def load_env_config():
+    env_file_path = os.path.join(os.path.dirname(__file__), 'env.json')
+
+    try:
+        with open(env_file_path, 'r', encoding='utf-8') as f:
+            return json.load(f)
+    except FileNotFoundError:
+        return {}
+    except json.JSONDecodeError:
+        return {}
+
+
+ENV_CONFIG = load_env_config()
+ALLOWED_PASSWORD = ENV_CONFIG.get("admin_password", "")
+TOTP_SECRET = ENV_CONFIG.get("totp_secret", "")
 
 
 def send_response(status, content_type="application/json", body=""):
@@ -19,23 +37,32 @@ def verify_credentials(payload):
     Verifies credentials provided in the payload.
     Supports either 'password' or 'totp_token'.
     """
-    if 'password' in payload:
-        password = payload['password']
-        if not password:
-            return False, "Password is required."
+    password = payload.get('password', '')
+    totp_token = payload.get('totp_token', '')
 
-        if password == ALLOWED_PASSWORD:
-            return True, "Authentication successful"
+    if password:
+        if not ALLOWED_PASSWORD:
+            return False, "Password authentication is not configured."
 
-    elif 'totp_token' in payload:
-        token = payload['totp_token']
-        if not token:
-            return False, "TOTP token is required."
+        if hmac.compare_digest(password, ALLOWED_PASSWORD):
+            return True, "Password authentication successful"
 
-        if len(token) > 0:
-            return True, "TOTP token verified"
+        return False, "Invalid password"
 
-    return False, "Invalid credentials"
+    if totp_token:
+        if not TOTP_SECRET:
+            return False, "TOTP authentication is not configured."
+
+        try:
+            totp = pyotp.TOTP(TOTP_SECRET)
+            if totp.verify(str(totp_token).replace(" ", ""), valid_window=1):
+                return True, "TOTP authentication successful"
+        except Exception:
+            return False, "TOTP verification failed."
+
+        return False, "Invalid TOTP token"
+
+    return False, "Password or TOTP token is required"
 
 
 def main():
@@ -118,4 +145,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-

@@ -46,19 +46,51 @@ function Admin({}) {
 
 	const handleSave = async e => {
 		e.preventDefault();
+
+		const useTotp = window.confirm(
+			"Choose verification method:\n\nOK = Authenticator code\nCancel = Password"
+		);
+
+		const credentials = {};
+
+		if (useTotp) {
+			const totpToken = window.prompt("Enter your 6-digit authenticator code:");
+
+			if (!totpToken) {
+				setStatus('Save cancelled.');
+				setTimeout(() => setStatus(''), 3000);
+				return;
+			}
+
+			credentials.totp_token = totpToken.replace(/\D/g, '').slice(0, 6);
+		} else {
+			const password = window.prompt("Enter admin password:");
+
+			if (!password) {
+				setStatus('Save cancelled.');
+				setTimeout(() => setStatus(''), 3000);
+				return;
+			}
+
+			credentials.password = password;
+		}
+
 		setStatus('Saving...');
+
 		try {
 			const response = await fetch('/admin/save', {
 			method: 'POST',
 			headers: { 'Content-Type': 'application/json' },
 			body: JSON.stringify({
-				password: 'admin_secret_password',
+				...credentials,
 				content
 			})
 			});
 			if (response.ok) {
 				setStatus('Changes saved successfully!');
 				setTimeout(() => setStatus(''), 3000);
+			} else if (response.status === 403) {
+				setStatus('Authentication failed.');
 			} else {
 				setStatus('Error saving content.');
 			}
@@ -86,10 +118,10 @@ function Admin({}) {
 
 				<section className="admin-section">
 					<h2>About Us</h2>
-					<textarea 
-						name="about" 
-						value={content.about} 
-						onChange={handleChange} 
+					<textarea
+						name="about"
+						value={content.about}
+						onChange={handleChange}
 						className="admin-textarea"
 						rows="8"
 						placeholder="Enter the about description..."
@@ -126,33 +158,33 @@ function Admin({}) {
 								<div className="admin-row" key={mIdx}>
 									<div className="admin-field">
 										<label>Name</label>
-										<input 
-											name={`committeeMembers.${category}[${mIdx}].name`} 
-											value={member.name} 
-											onChange={handleChange} 
+										<input
+											name={`committeeMembers.${category}[${mIdx}].name`}
+											value={member.name}
+											onChange={handleChange}
 										/>
 									</div>
 									<div className="admin-field">
 										<label>Position</label>
-										<input 
-											name={`committeeMembers.${category}[${mIdx}].position`} 
-											value={member.position || ''} 
-											onChange={handleChange} 
+										<input
+											name={`committeeMembers.${category}[${mIdx}].position`}
+											value={member.position || ''}
+											onChange={handleChange}
 										/>
 									</div>
 									<div className="admin-field">
 										<label>Image Path</label>
 										<div className="admin-input-preview">
-											<input 
-															name={`committeeMembers.${category}[${mIdx}].img`} 
-															value={member.img} 
-															onChange={handleChange} 
+											<input
+															name={`committeeMembers.${category}[${mIdx}].img`}
+															value={member.img}
+															onChange={handleChange}
 															/>
 											{member.img && (
-															<img 
-																src={member.img} 
-																className="admin-image-preview" 
-																alt="Preview" 
+															<img
+																src={member.img}
+																className="admin-image-preview"
+																alt="Preview"
 															/>
 															)}
 										</div>
