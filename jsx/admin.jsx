@@ -48,10 +48,13 @@ function Admin({}) {
 		e.preventDefault();
 		setStatus('Saving...');
 		try {
-			const response = await fetch('/cgi_bin/cgi_bin.py', {
+			const response = await fetch('/admin/save', {
 			method: 'POST',
 			headers: { 'Content-Type': 'application/json' },
-			body: JSON.stringify(content)
+			body: JSON.stringify({
+				password: 'admin_secret_password',
+				content
+			})
 			});
 			if (response.ok) {
 				setStatus('Changes saved successfully!');
