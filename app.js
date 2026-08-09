@@ -58,11 +58,17 @@ function CommitteeMember({
   }, void 0, true);
 }
 import { jsxDEV as _jsxDEV } from "react/jsx-dev-runtime";
-if (window.location.pathname === "/admin") {
+if (window.location.pathname === "/admin" || window.location.pathname === "/singers/admin.html") {
   const adminApp = document.getElementById('admin_app');
   const adminAppRoot = ReactDOM.createRoot(adminApp);
   adminAppRoot.render(/*#__PURE__*/_jsxDEV(Admin, {}, void 0, false));
 }
+
+// TODO:
+// add and remove committee members
+// add and remove committee categories
+// sort backend for save with authentication and git commit
+
 function Admin({}) {
   const [content, setContent] = React.useState(null);
   const [status, setStatus] = React.useState('');
@@ -97,7 +103,7 @@ function Admin({}) {
     e.preventDefault();
     setStatus('Saving...');
     try {
-      const response = await fetch('/api/content', {
+      const response = await fetch('/cgi_bin/admin.py', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -127,6 +133,23 @@ function Admin({}) {
       onSubmit: handleSave,
       className: "admin-form",
       children: [/*#__PURE__*/_jsxDEV("section", {
+        children: [/*#__PURE__*/_jsxDEV("h2", {
+          children: "Details"
+        }, void 0, false), /*#__PURE__*/_jsxDEV("div", {
+          className: "admin-row",
+          children: /*#__PURE__*/_jsxDEV("div", {
+            className: "admin-field",
+            children: [/*#__PURE__*/_jsxDEV("label", {
+              children: "Rehearsal Details"
+            }, void 0, false), /*#__PURE__*/_jsxDEV("input", {
+              name: "rehearsalDetails",
+              type: "text",
+              value: content.rehearsalDetails,
+              onChange: handleChange
+            }, void 0, false)]
+          }, void 0, true)
+        }, void 0, false)]
+      }, void 0, true), /*#__PURE__*/_jsxDEV("section", {
         className: "admin-section",
         children: [/*#__PURE__*/_jsxDEV("h2", {
           children: "About Us"
@@ -211,11 +234,18 @@ function Admin({}) {
               className: "admin-field",
               children: [/*#__PURE__*/_jsxDEV("label", {
                 children: "Image Path"
-              }, void 0, false), /*#__PURE__*/_jsxDEV("input", {
-                name: `committeeMembers.${category}[${mIdx}].img`,
-                value: member.img,
-                onChange: handleChange
-              }, void 0, false)]
+              }, void 0, false), /*#__PURE__*/_jsxDEV("div", {
+                className: "admin-input-preview",
+                children: [/*#__PURE__*/_jsxDEV("input", {
+                  name: `committeeMembers.${category}[${mIdx}].img`,
+                  value: member.img,
+                  onChange: handleChange
+                }, void 0, false), member.img && /*#__PURE__*/_jsxDEV("img", {
+                  src: member.img,
+                  className: "admin-image-preview",
+                  alt: "Preview"
+                }, void 0, false)]
+              }, void 0, true)]
             }, void 0, true)]
           }, mIdx, true))]
         }, category, true))]
