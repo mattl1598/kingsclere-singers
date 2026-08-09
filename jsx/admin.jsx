@@ -1,10 +1,15 @@
-if (window.location.pathname === "/admin") {
+if (window.location.pathname === "/admin" || window.location.pathname === "/singers/admin.html") {
 	const adminApp = document.getElementById('admin_app');
 	const adminAppRoot = ReactDOM.createRoot(adminApp);
 	adminAppRoot.render(
 		<Admin></Admin>
 	);
 }
+
+// TODO:
+// add and remove committee members
+// add and remove committee categories
+// sort backend for save with authentication and git commit
 
 function Admin({}) {
 	const [content, setContent] = React.useState(null);
@@ -39,14 +44,14 @@ function Admin({}) {
 		setContent(newContent);
 	};
 
-	const handleSave = async (e) => {
+	const handleSave = async e => {
 		e.preventDefault();
 		setStatus('Saving...');
 		try {
-			const response = await fetch('/api/content', {
-				method: 'POST',
-				headers: { 'Content-Type': 'application/json' },
-				body: JSON.stringify(content)
+			const response = await fetch('/cgi_bin/admin.py', {
+			method: 'POST',
+			headers: { 'Content-Type': 'application/json' },
+			body: JSON.stringify(content)
 			});
 			if (response.ok) {
 				setStatus('Changes saved successfully!');
@@ -65,6 +70,17 @@ function Admin({}) {
 		<div className="admin">
 			<h1 className="admin-title">Content Management</h1>
 			<form onSubmit={handleSave} className="admin-form">
+
+				<section>
+					<h2>Details</h2>
+					<div className="admin-row">
+						<div className="admin-field">
+							<label>Rehearsal Details</label>
+							<input name="rehearsalDetails" type="text" value={content.rehearsalDetails} onChange={handleChange} />
+						</div>
+					</div>
+				</section>
+
 				<section className="admin-section">
 					<h2>About Us</h2>
 					<textarea 
@@ -123,11 +139,20 @@ function Admin({}) {
 									</div>
 									<div className="admin-field">
 										<label>Image Path</label>
-										<input 
-											name={`committeeMembers.${category}[${mIdx}].img`} 
-											value={member.img} 
-											onChange={handleChange} 
-										/>
+										<div className="admin-input-preview">
+											<input 
+															name={`committeeMembers.${category}[${mIdx}].img`} 
+															value={member.img} 
+															onChange={handleChange} 
+															/>
+											{member.img && (
+															<img 
+																src={member.img} 
+																className="admin-image-preview" 
+																alt="Preview" 
+															/>
+															)}
+										</div>
 									</div>
 								</div>
 							))}
