@@ -1,4 +1,4 @@
-#!/var/www/kingsclere-singers/.venv/bin/python
+#!/home/mattl1598/.venv/bin/python
 import cgi
 import cgitb
 import json
