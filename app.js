@@ -103,7 +103,7 @@ function Admin({}) {
     e.preventDefault();
     setStatus('Saving...');
     try {
-      const response = await fetch('/cgi_bin/admin.py', {
+      const response = await fetch('/cgi_bin/cgi_bin.py', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
