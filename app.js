@@ -452,7 +452,7 @@ function Events({}) {
       children: "Upcoming Events"
     }, void 0, false), /*#__PURE__*/_jsxDEV("div", {
       className: "events",
-      children: events ? events : /*#__PURE__*/_jsxDEV("div", {
+      children: events.length ? events : /*#__PURE__*/_jsxDEV("div", {
         className: "noEvents",
         children: /*#__PURE__*/_jsxDEV("h2", {
           children: ["No currently scheduled events. ", /*#__PURE__*/_jsxDEV("br", {}, void 0, false), " Keep an eye out for future announcements."]
