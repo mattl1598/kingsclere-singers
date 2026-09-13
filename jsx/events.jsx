@@ -53,7 +53,7 @@ function Events({}) {
 				Upcoming Events
 			</h1>
 			<div className="events">
-				{events}
+				{ events ? events : <div className="noEvents"><h2>No currently scheduled events. <br/> Keep an eye out for future announcements.</h2></div> }
 			</div>
 			<div className="buttons">
 				<div className="button left" onClick={prev}>

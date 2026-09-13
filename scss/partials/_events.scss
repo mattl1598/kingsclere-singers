@@ -79,6 +79,13 @@ div.events {
 	// Hide scrollbar in IE and Edge
 	-ms-overflow-style: none;
 
+	div.noEvents {
+		width: 100%;
+		height: 100%;
+		display: grid;
+		place-items: center;
+	}
+
 	div.event {
 		scroll-snap-align: start;
 		scroll-snap-stop: always;
