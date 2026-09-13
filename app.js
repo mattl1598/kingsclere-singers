@@ -101,6 +101,25 @@ function Admin({}) {
   };
   const handleSave = async e => {
     e.preventDefault();
+    const useTotp = window.confirm("Choose verification method:\n\nOK = Authenticator code\nCancel = Password");
+    const credentials = {};
+    if (useTotp) {
+      const totpToken = window.prompt("Enter your 6-digit authenticator code:");
+      if (!totpToken) {
+        setStatus('Save cancelled.');
+        setTimeout(() => setStatus(''), 3000);
+        return;
+      }
+      credentials.totp_token = totpToken.replace(/\D/g, '').slice(0, 6);
+    } else {
+      const password = window.prompt("Enter admin password:");
+      if (!password) {
+        setStatus('Save cancelled.');
+        setTimeout(() => setStatus(''), 3000);
+        return;
+      }
+      credentials.password = password;
+    }
     setStatus('Saving...');
     try {
       const response = await fetch('/admin/save', {
@@ -109,13 +128,15 @@ function Admin({}) {
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-          password: 'admin_secret_password',
+          ...credentials,
           content
         })
       });
       if (response.ok) {
         setStatus('Changes saved successfully!');
         setTimeout(() => setStatus(''), 3000);
+      } else if (response.status === 403) {
+        setStatus('Authentication failed.');
       } else {
         setStatus('Error saving content.');
       }
