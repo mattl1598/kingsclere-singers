@@ -67,7 +67,9 @@ if (window.location.pathname === "/admin" || window.location.pathname === "/sing
 // TODO:
 // add and remove committee members
 // add and remove committee categories
-// sort backend for save with authentication and git commit
+// sort backend for save with git commit as backup method
+// git ignore env.json
+// add new images for committee members
 
 function Admin({}) {
   const [content, setContent] = React.useState(null);
@@ -101,7 +103,12 @@ function Admin({}) {
   };
   const handleSave = async e => {
     e.preventDefault();
-    const useTotp = window.confirm("Choose verification method:\n\nOK = Authenticator code\nCancel = Password");
+
+    // const useTotp = window.confirm(
+    // 	"Choose verification method:\n\nOK = Authenticator code\nCancel = Password"
+    // );
+
+    const useTotp = false;
     const credentials = {};
     if (useTotp) {
       const totpToken = window.prompt("Enter your 6-digit authenticator code:");
@@ -445,7 +452,12 @@ function Events({}) {
       children: "Upcoming Events"
     }, void 0, false), /*#__PURE__*/_jsxDEV("div", {
       className: "events",
-      children: events
+      children: events ? events : /*#__PURE__*/_jsxDEV("div", {
+        className: "noEvents",
+        children: /*#__PURE__*/_jsxDEV("h2", {
+          children: ["No currently scheduled events. ", /*#__PURE__*/_jsxDEV("br", {}, void 0, false), " Keep an eye out for future announcements."]
+        }, void 0, true)
+      }, void 0, false)
     }, void 0, false), /*#__PURE__*/_jsxDEV("div", {
       className: "buttons",
       children: [/*#__PURE__*/_jsxDEV("div", {
