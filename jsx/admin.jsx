@@ -15,6 +15,8 @@ if (window.location.pathname === "/admin" || window.location.pathname === "/sing
 
 function Admin({}) {
 	const [content, setContent] = React.useState(null);
+	const [eventsContent, setEventsContent] = React.useState(null);
+	const [editingEventIndex, setEditingEventIndex] = React.useState(null);
 	const [status, setStatus] = React.useState('');
 
 	React.useEffect(() => {
@@ -22,6 +24,11 @@ function Admin({}) {
 			.then(response => response.json())
 			.then(data => setContent(data))
 			.catch(err => console.error("Failed to load content:", err));
+
+		fetch("/events.json")
+			.then(response => response.json())
+			.then(data => setEventsContent(data))
+			.catch(err => console.error("Failed to load events:", err));
 	}, []);
 
 	const handleChange = (e) => {
@@ -43,6 +50,128 @@ function Admin({}) {
 
 		const lastKey = keys[keys.length - 1];
 		current[lastKey] = value;
+		setContent(newContent);
+	};
+
+	const handleEventChange = (e) => {
+		const { name, value } = e.target;
+		const newEventsContent = {
+			...eventsContent,
+			events: [...eventsContent.events]
+		};
+
+		const event = {
+			...newEventsContent.events[editingEventIndex],
+			start: {
+				...newEventsContent.events[editingEventIndex].start
+			},
+			attachments: [
+				...(newEventsContent.events[editingEventIndex].attachments || [])
+			]
+		};
+
+		if (name === "dateTime") {
+			event.start.dateTime = value;
+		} else if (name === "posterUrl") {
+			if (value) {
+				event.attachments = [{ fileUrl: value }];
+			} else {
+				event.attachments = [];
+			}
+		} else {
+			event[name] = value;
+		}
+
+		newEventsContent.events[editingEventIndex] = event;
+		setEventsContent(newEventsContent);
+	};
+
+	const addEvent = () => {
+		const newEventsContent = {
+			...eventsContent,
+			events: [
+				...eventsContent.events,
+				{
+					status: "confirmed",
+					summary: "New Event",
+					start: {
+						dateTime: new Date().toISOString().slice(0, 16)
+					},
+					location: "",
+					description: "",
+					attachments: []
+				}
+			]
+		};
+
+		setEventsContent(newEventsContent);
+		setEditingEventIndex(newEventsContent.events.length - 1);
+	};
+
+	const removeEditingEvent = () => {
+		if (editingEventIndex === null) return;
+
+		const newEventsContent = {
+			...eventsContent,
+			events: eventsContent.events.filter((event, index) => index !== editingEventIndex)
+		};
+
+		setEventsContent(newEventsContent);
+		setEditingEventIndex(null);
+	};
+
+	const formatEventDateForList = (dateTime) => {
+		if (!dateTime) return "No date set";
+
+		const date = new Date(dateTime);
+
+		if (isNaN(date.getTime())) {
+			return dateTime;
+		}
+
+		return date.toLocaleString("en-GB", {
+			day: "2-digit",
+			month: "short",
+			year: "numeric",
+			hour: "2-digit",
+			minute: "2-digit"
+		});
+	};
+
+	const getDateTimeInputValue = (dateTime) => {
+		if (!dateTime) return "";
+
+		return dateTime.slice(0, 16);
+	};
+
+	const addCommitteeMember = (category) => {
+		const newContent = {
+			...content,
+			committeeMembers: {
+				...content.committeeMembers,
+				[category]: [
+					...content.committeeMembers[category],
+					{
+						name: "New Member",
+						position: "",
+						img: ""
+					}
+				]
+			}
+		};
+
+		setContent(newContent);
+	};
+
+	const removeCommitteeMember = (category, memberIndex) => {
+		const newContent = {
+			...content,
+			committeeMembers: {
+				...content.committeeMembers,
+				[category]: content.committeeMembers[category].filter((member, index) => index !== memberIndex)
+			}
+		};
+
 		setContent(newContent);
 	};
 
@@ -87,7 +216,8 @@ function Admin({}) {
 			headers: { 'Content-Type': 'application/json' },
 			body: JSON.stringify({
 				...credentials,
-				content
+				content,
+				eventsContent
 			})
 			});
 			if (response.ok) {
@@ -103,7 +233,9 @@ function Admin({}) {
 		}
 	};
 
-	if (!content) return <div className="admin">Loading content...</div>;
+	if (!content || !eventsContent) return <div className="admin">Loading content...</div>;
+
+	const editingEvent = editingEventIndex !== null ? eventsContent.events[editingEventIndex] : null;
 
 	return (
 		<div className="admin">
@@ -133,6 +265,28 @@ function Admin({}) {
 				</section>
 
 				<section className="admin-section">
+					<h2>Events</h2>
+
+					<div className="admin-events-list">
+						{eventsContent.events.map((event, eventIndex) => (
+							<button
+								type="button"
+								className="admin-event-row"
+								key={eventIndex}
+								onClick={() => setEditingEventIndex(eventIndex)}
+							>
+								<span>{event.summary || "Untitled event"}</span>
+								<span>{formatEventDateForList(event.start && event.start.dateTime)}</span>
+							</button>
+						))}
+					</div>
+
+					<button type="button" className="admin-add-btn" onClick={addEvent}>
+						Add Event
+					</button>
+				</section>
+
+				<section className="admin-section">
 					<h2>Social Media</h2>
 					<div className="admin-row">
 						<div className="admin-field">
@@ -157,7 +311,16 @@ function Admin({}) {
 					<h2>Committee Members</h2>
 					{Object.keys(content.committeeMembers).map((category => (
 						<div className="admin-category" key={category}>
-							<h3>{category}</h3>
+							<div className="admin-category-header">
+								<h3>{category}</h3>
+								<button
+									type="button"
+									className="admin-add-btn"
+									onClick={() => addCommitteeMember(category)}
+								>
+									Add Member
+								</button>
+							</div>
 							{content.committeeMembers[category].map((member, mIdx) => (
 								<div className="admin-row" key={mIdx}>
 									<div className="admin-field">
@@ -180,18 +343,27 @@ function Admin({}) {
 										<label>Image Path</label>
 										<div className="admin-input-preview">
 											<input
-															name={`committeeMembers.${category}[${mIdx}].img`}
-															value={member.img}
-															onChange={handleChange}
-															/>
+												name={`committeeMembers.${category}[${mIdx}].img`}
+												value={member.img}
+												onChange={handleChange}
+											/>
 											{member.img && (
-															<img
-																src={member.img}
-																className="admin-image-preview"
-																alt="Preview"
-															/>
-															)}
+												<img
+													src={member.img}
+													className="admin-image-preview"
+													alt="Preview"
+												/>
+											)}
 										</div>
+									</div>
+									<div className="admin-committee-actions">
+										<button
+											type="button"
+											className="admin-delete-btn"
+											onClick={() => removeCommitteeMember(category, mIdx)}
+										>
+											<span className="material-symbols-outlined">delete</span>
+										</button>
 									</div>
 								</div>
 							))}
@@ -204,6 +376,287 @@ function Admin({}) {
 					{status && <p className="admin-status">{status}</p>}
 				</div>
 			</form>
+
+			<ImageLibrary />
+
+			{editingEvent && (
+				<div className="admin-modal-backdrop">
+					<div className="admin-modal">
+						<div className="admin-modal-header">
+							<h2>Edit Event</h2>
+							<button type="button" onClick={() => setEditingEventIndex(null)}>
+								Close
+							</button>
+						</div>
+
+						<div className="admin-field">
+							<label>Event Name</label>
+							<input
+								name="summary"
+								value={editingEvent.summary || ""}
+								onChange={handleEventChange}
+							/>
+						</div>
+
+						<div className="admin-field">
+							<label>Date and Time</label>
+							<input
+								name="dateTime"
+								type="datetime-local"
+								value={getDateTimeInputValue(editingEvent.start && editingEvent.start.dateTime)}
+								onChange={handleEventChange}
+							/>
+						</div>
+
+						<div className="admin-field">
+							<label>Status</label>
+							<select
+								name="status"
+								value={editingEvent.status || "confirmed"}
+								onChange={handleEventChange}
+							>
+								<option value="confirmed">Confirmed</option>
+								<option value="cancelled">Cancelled</option>
+							</select>
+						</div>
+
+						<div className="admin-field">
+							<label>Location</label>
+							<input
+								name="location"
+								value={editingEvent.location || ""}
+								onChange={handleEventChange}
+							/>
+						</div>
+
+						<div className="admin-field">
+							<label>Description</label>
+							<textarea
+								name="description"
+								value={editingEvent.description || ""}
+								onChange={handleEventChange}
+								rows="8"
+								className="admin-textarea"
+							/>
+						</div>
+
+						<div className="admin-field">
+							<label>Poster Image URL</label>
+							<input
+								name="posterUrl"
+								value={
+									editingEvent.attachments &&
+									editingEvent.attachments.length
+										? editingEvent.attachments[0].fileUrl
+										: ""
+								}
+								onChange={handleEventChange}
+								placeholder="/img/poster1.webp"
+							/>
+						</div>
+
+						<div className="admin-modal-actions">
+							<button type="button" className="admin-delete-btn" onClick={removeEditingEvent}>
+								Delete Event
+							</button>
+							<button type="button" className="admin-save-btn" onClick={() => setEditingEventIndex(null)}>
+								Done
+							</button>
+						</div>
+					</div>
+				</div>
+			)}
 		</div>
+	)
+}
+
+// ... existing code ...
+
+function ImageLibrary({}) {
+	const [images, setImages] = React.useState([]);
+	const [selectedImage, setSelectedImage] = React.useState(null);
+	const [status, setStatus] = React.useState('');
+	const [isUploading, setIsUploading] = React.useState(false);
+
+	React.useEffect(() => {
+		loadImages();
+	}, []);
+
+	const loadImages = () => {
+		fetch("/admin/images")
+			.then(response => response.json())
+			.then(data => {
+				setImages(data.images || []);
+			})
+			.catch(err => {
+				console.error("Failed to load images:", err);
+				setImages([]);
+				setStatus("Could not load images.");
+			});
+	};
+
+	const uploadImage = async (e) => {
+		const file = e.target.files[0];
+
+		if (!file) return;
+
+		const password = window.prompt("Enter admin password to upload image:");
+
+		if (!password) {
+			setStatus("Upload cancelled.");
+			e.target.value = "";
+			setTimeout(() => setStatus(""), 3000);
+			return;
+		}
+
+		const formData = new FormData();
+		formData.append("password", password);
+		formData.append("image", file);
+
+		setIsUploading(true);
+		setStatus("Uploading image...");
+
+		try {
+			const response = await fetch("/admin/images/upload", {
+				method: "POST",
+				body: formData
+			});
+
+			if (!response.ok) {
+				setStatus("Image upload failed.");
+				e.target.value = "";
+				setIsUploading(false);
+				return;
+			}
+
+			await response.json();
+
+			setStatus("Image uploaded successfully.");
+			e.target.value = "";
+
+			loadImages();
+
+			setTimeout(() => setStatus(""), 3000);
+		} catch (err) {
+			console.error("Image upload failed:", err);
+			setStatus("Server error while uploading image.");
+			e.target.value = "";
+		}
+
+		setIsUploading(false);
+	};
+
+	const copyImageLink = async (link) => {
+		try {
+			await navigator.clipboard.writeText(link);
+			setStatus("Image link copied.");
+			setTimeout(() => setStatus(""), 3000);
+		} catch (err) {
+			setStatus("Could not copy link. Select and copy it manually.");
+			setTimeout(() => setStatus(""), 3000);
+		}
+	};
+
+	return (
+		<section className="admin-section image-library">
+			<h2>Image Library</h2>
+
+			<div className="admin-upload-area">
+				<label className={`admin-upload-label ${isUploading ? "disabled" : ""}`}>
+					<span className="material-symbols-outlined">upload</span>
+					{isUploading ? "Uploading..." : "Upload New Image"}
+					<input
+						type="file"
+						accept="image/*"
+						onChange={uploadImage}
+						disabled={isUploading}
+					/>
+				</label>
+
+				<button
+					type="button"
+					className="admin-add-btn"
+					onClick={loadImages}
+					disabled={isUploading}
+				>
+					Refresh Images
+				</button>
+			</div>
+
+			{status && (
+				<p className="admin-status">{status}</p>
+			)}
+
+			<div className="admin-image-grid">
+				{images.length ? images.map((image) => (
+					<button
+						type="button"
+						className="admin-image-card"
+						key={image.path}
+						onClick={() => setSelectedImage(image)}
+					>
+						<img src={image.url} alt={image.filename} />
+						<span>{image.filename}</span>
+					</button>
+				)) : (
+					<p>No images found.</p>
+				)}
+			</div>
+
+			{selectedImage && (
+				<div className="admin-modal-backdrop">
+					<div className="admin-modal admin-image-modal">
+						<div className="admin-modal-header">
+							<h2>{selectedImage.filename}</h2>
+							<button type="button" onClick={() => setSelectedImage(null)}>
+								Close
+							</button>
+						</div>
+
+						<img
+							className="admin-full-image"
+							src={selectedImage.url}
+							alt={selectedImage.filename}
+						/>
+
+						<div className="admin-field">
+							<label>Image path to use in admin fields</label>
+							<div className="admin-copy-row">
+								<input
+									readOnly
+									value={selectedImage.path}
+									onFocus={(e) => e.target.select()}
+								/>
+								<button
+									type="button"
+									className="admin-add-btn"
+									onClick={() => copyImageLink(selectedImage.path)}
+								>
+									Copy
+								</button>
+							</div>
+						</div>
+
+						<div className="admin-field">
+							<label>Direct image URL</label>
+							<div className="admin-copy-row">
+								<input
+									readOnly
+									value={selectedImage.url}
+									onFocus={(e) => e.target.select()}
+								/>
+								<button
+									type="button"
+									className="admin-add-btn"
+									onClick={() => copyImageLink(selectedImage.url)}
+								>
+									Copy
+								</button>
+							</div>
+						</div>
+					</div>
+				</div>
+			)}
+		</section>
 	)
 }

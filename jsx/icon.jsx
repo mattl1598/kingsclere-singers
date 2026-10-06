@@ -68,12 +68,12 @@ function Icon({icon="", timeline, onClick, className="", iconStyle="outlined", t
 	}
 	if (Object.keys(iconPaths).includes(icon) || icon === "siteLogo") {
 		let d = iconPaths[icon]
-		const context = React.useContext(app)
-		if (icon === "siteLogo") {
-			return (
-				<span {...opts} className={"icon"} onClick={onClick} dangerouslySetInnerHTML={{__html: context.siteJson.site_logo}}></span>
-			)
-		}
+		// const context = React.useContext(app)
+		// if (icon === "siteLogo") {
+		// 	return (
+		// 		<span {...opts} className={"icon"} onClick={onClick} dangerouslySetInnerHTML={{__html: context.siteJson.site_logo}}></span>
+		// 	)
+		// }
 
 
 		return (

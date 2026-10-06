@@ -3,8 +3,27 @@ function Events({}) {
 	const [events, setEvents] = React.useState([])
 	const [current, setCurrent] = React.useState(0);
 
-	const calendarID = "5ed625756269cf77deab7070dd37ddc88d865b92dab32ebfc77eb0ff0bd7e8ac@group.calendar.google.com"
-	const apiKey = "AIzaSyCxXc28FCub4QScbrWUkaL9Ml13xx2qJl4"
+	fetch("/events.json")
+			.then(response => response.json())
+			.then(data => {
+				let tempEvents = []
+
+				data.events.forEach((event) => {
+					if (event.status === "confirmed" && new Date(event.start.dateTime) > Date.now()) {
+						tempEvents.push(event)
+					}
+				})
+
+				tempEvents.sort((a, b) => {
+					return a.start.dateTime.localeCompare(b.start.dateTime)
+				})
+
+				setEventsJson(tempEvents)
+			})
+			.catch(error => {
+				console.error("Failed to load events.json:", error)
+				setEventsJson([])
+			})
 
 	const count = events.length;
 
@@ -14,29 +33,17 @@ function Events({}) {
 	const next = () => setCurrent(i => Math.min(count - 1, i + 1));
 
 	React.useEffect(() => {
-		fetch(
-			`https://www.googleapis.com/calendar/v3/calendars/${calendarID}/events?key=${apiKey}`
-		).then(
-			response => response.json()
-		).then(
-			(data) => {
-				console.log(data)
-				let tempEvents = []
-				data.items.forEach((event, i) => {
-					if (event.status === "confirmed" && new Date(event.start.dateTime) > Date.now() ) {
-						tempEvents.push(event)
-					}
-				})
-				tempEvents.sort((a, b) => {return a.start.dateTime.localeCompare(b.start.dateTime)})
-				setEventsJson(tempEvents)
-			}
-		)
-	}, [])
+		let tempEvents = []
+		eventsJson.forEach((event, i) => {
+			tempEvents.push(<Event event={event} index={i} key={i} isMobile={isMobile}/>)
+		})
+		setEvents(tempEvents)
+	}, [eventsJson])
 
 	React.useEffect(() => {
 		let tempEvents = []
 		eventsJson.forEach((event, i) => {
-			tempEvents.push(<Event event={event} apiKey={apiKey} index={i} key={i} isMobile={isMobile}/>)
+			tempEvents.push(<Event event={event} index={i} key={i} isMobile={isMobile}/>)
 		})
 		setEvents(tempEvents)
 	}, [eventsJson])
@@ -71,12 +78,13 @@ function Events({}) {
 	)
 }
 
-function Event({event, apiKey, index, isMobile}) {
+function Event({event, index, isMobile}) {
 	const imgRef = React.useRef(null)
-	function getAttachmentUrl(driveUrl) {
-		let idIndex = driveUrl.lastIndexOf("id=")
-		let fileID = driveUrl.substring(idIndex + 3)
-		return `https://content.googleapis.com/drive/v3/files/${fileID}?key=${apiKey}&alt=media&source=downloadUrl`
+	function getAttachmentUrl(url) {
+		// let idIndex = url.lastIndexOf("id=")
+		// let fileID = url.substring(idIndex + 3)
+		// return `https://content.googleapis.com/drive/v3/files/${fileID}?key=${apiKey}&alt=media&source=downloadUrl`
+		return url
 	}
 
 	function onLoad() {

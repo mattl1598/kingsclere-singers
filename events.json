@@ -1,0 +1,28 @@
+{
+	"events": [
+		{
+			"status": "confirmed",
+			"summary": "Temp Event: Summer Concert",
+			"start": {
+				"dateTime": "2027-07-10T19:30:00+01:00"
+			},
+			"location": "Kingsclere Village Club, George Street, Kingsclere",
+			"description": "Join the Kingsclere Singers for a temporary example summer concert event.\n\nTickets and further details to be announced.",
+			"attachments": [
+				{
+					"fileUrl": "/img/poster1.webp"
+				}
+			]
+		},
+		{
+			"status": "confirmed",
+			"summary": "Temp Event: Christmas Carols",
+			"start": {
+				"dateTime": "2027-12-15T18:00:00+00:00"
+			},
+			"location": "St Mary's Church, Kingsclere",
+			"description": "A temporary example Christmas event with festive music and community singing.",
+			"attachments": []
+		}
+	]
+}
