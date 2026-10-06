@@ -73,9 +73,12 @@ if (window.location.pathname === "/admin" || window.location.pathname === "/sing
 
 function Admin({}) {
   const [content, setContent] = React.useState(null);
+  const [eventsContent, setEventsContent] = React.useState(null);
+  const [editingEventIndex, setEditingEventIndex] = React.useState(null);
   const [status, setStatus] = React.useState('');
   React.useEffect(() => {
     fetch("/content.json").then(response => response.json()).then(data => setContent(data)).catch(err => console.error("Failed to load content:", err));
+    fetch("/events.json").then(response => response.json()).then(data => setEventsContent(data)).catch(err => console.error("Failed to load events:", err));
   }, []);
   const handleChange = e => {
     const {
@@ -99,6 +102,106 @@ function Admin({}) {
     }
     const lastKey = keys[keys.length - 1];
     current[lastKey] = value;
+    setContent(newContent);
+  };
+  const handleEventChange = e => {
+    const {
+      name,
+      value
+    } = e.target;
+    const newEventsContent = {
+      ...eventsContent,
+      events: [...eventsContent.events]
+    };
+    const event = {
+      ...newEventsContent.events[editingEventIndex],
+      start: {
+        ...newEventsContent.events[editingEventIndex].start
+      },
+      attachments: [...(newEventsContent.events[editingEventIndex].attachments || [])]
+    };
+    if (name === "dateTime") {
+      event.start.dateTime = value;
+    } else if (name === "posterUrl") {
+      if (value) {
+        event.attachments = [{
+          fileUrl: value
+        }];
+      } else {
+        event.attachments = [];
+      }
+    } else {
+      event[name] = value;
+    }
+    newEventsContent.events[editingEventIndex] = event;
+    setEventsContent(newEventsContent);
+  };
+  const addEvent = () => {
+    const newEventsContent = {
+      ...eventsContent,
+      events: [...eventsContent.events, {
+        status: "confirmed",
+        summary: "New Event",
+        start: {
+          dateTime: new Date().toISOString().slice(0, 16)
+        },
+        location: "",
+        description: "",
+        attachments: []
+      }]
+    };
+    setEventsContent(newEventsContent);
+    setEditingEventIndex(newEventsContent.events.length - 1);
+  };
+  const removeEditingEvent = () => {
+    if (editingEventIndex === null) return;
+    const newEventsContent = {
+      ...eventsContent,
+      events: eventsContent.events.filter((event, index) => index !== editingEventIndex)
+    };
+    setEventsContent(newEventsContent);
+    setEditingEventIndex(null);
+  };
+  const formatEventDateForList = dateTime => {
+    if (!dateTime) return "No date set";
+    const date = new Date(dateTime);
+    if (isNaN(date.getTime())) {
+      return dateTime;
+    }
+    return date.toLocaleString("en-GB", {
+      day: "2-digit",
+      month: "short",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit"
+    });
+  };
+  const getDateTimeInputValue = dateTime => {
+    if (!dateTime) return "";
+    return dateTime.slice(0, 16);
+  };
+  const addCommitteeMember = category => {
+    const newContent = {
+      ...content,
+      committeeMembers: {
+        ...content.committeeMembers,
+        [category]: [...content.committeeMembers[category], {
+          name: "New Member",
+          position: "",
+          img: ""
+        }]
+      }
+    };
+    setContent(newContent);
+  };
+  const removeCommitteeMember = (category, memberIndex) => {
+    const newContent = {
+      ...content,
+      committeeMembers: {
+        ...content.committeeMembers,
+        [category]: content.committeeMembers[category].filter((member, index) => index !== memberIndex)
+      }
+    };
     setContent(newContent);
   };
   const handleSave = async e => {
@@ -136,7 +239,8 @@ function Admin({}) {
         },
         body: JSON.stringify({
           ...credentials,
-          content
+          content,
+          eventsContent
         })
       });
       if (response.ok) {
@@ -151,10 +255,11 @@ function Admin({}) {
       setStatus('Server error.');
     }
   };
-  if (!content) return /*#__PURE__*/_jsxDEV("div", {
+  if (!content || !eventsContent) return /*#__PURE__*/_jsxDEV("div", {
     className: "admin",
     children: "Loading content..."
   }, void 0, false);
+  const editingEvent = editingEventIndex !== null ? eventsContent.events[editingEventIndex] : null;
   return /*#__PURE__*/_jsxDEV("div", {
     className: "admin",
     children: [/*#__PURE__*/_jsxDEV("h1", {
@@ -191,6 +296,28 @@ function Admin({}) {
           className: "admin-textarea",
           rows: "8",
           placeholder: "Enter the about description..."
+        }, void 0, false)]
+      }, void 0, true), /*#__PURE__*/_jsxDEV("section", {
+        className: "admin-section",
+        children: [/*#__PURE__*/_jsxDEV("h2", {
+          children: "Events"
+        }, void 0, false), /*#__PURE__*/_jsxDEV("div", {
+          className: "admin-events-list",
+          children: eventsContent.events.map((event, eventIndex) => /*#__PURE__*/_jsxDEV("button", {
+            type: "button",
+            className: "admin-event-row",
+            onClick: () => setEditingEventIndex(eventIndex),
+            children: [/*#__PURE__*/_jsxDEV("span", {
+              children: event.summary || "Untitled event"
+            }, void 0, false), /*#__PURE__*/_jsxDEV("span", {
+              children: formatEventDateForList(event.start && event.start.dateTime)
+            }, void 0, false)]
+          }, eventIndex, true))
+        }, void 0, false), /*#__PURE__*/_jsxDEV("button", {
+          type: "button",
+          className: "admin-add-btn",
+          onClick: addEvent,
+          children: "Add Event"
         }, void 0, false)]
       }, void 0, true), /*#__PURE__*/_jsxDEV("section", {
         className: "admin-section",
@@ -239,9 +366,17 @@ function Admin({}) {
           children: "Committee Members"
         }, void 0, false), Object.keys(content.committeeMembers).map(category => /*#__PURE__*/_jsxDEV("div", {
           className: "admin-category",
-          children: [/*#__PURE__*/_jsxDEV("h3", {
-            children: category
-          }, void 0, false), content.committeeMembers[category].map((member, mIdx) => /*#__PURE__*/_jsxDEV("div", {
+          children: [/*#__PURE__*/_jsxDEV("div", {
+            className: "admin-category-header",
+            children: [/*#__PURE__*/_jsxDEV("h3", {
+              children: category
+            }, void 0, false), /*#__PURE__*/_jsxDEV("button", {
+              type: "button",
+              className: "admin-add-btn",
+              onClick: () => addCommitteeMember(category),
+              children: "Add Member"
+            }, void 0, false)]
+          }, void 0, true), content.committeeMembers[category].map((member, mIdx) => /*#__PURE__*/_jsxDEV("div", {
             className: "admin-row",
             children: [/*#__PURE__*/_jsxDEV("div", {
               className: "admin-field",
@@ -277,7 +412,18 @@ function Admin({}) {
                   alt: "Preview"
                 }, void 0, false)]
               }, void 0, true)]
-            }, void 0, true)]
+            }, void 0, true), /*#__PURE__*/_jsxDEV("div", {
+              className: "admin-committee-actions",
+              children: /*#__PURE__*/_jsxDEV("button", {
+                type: "button",
+                className: "admin-delete-btn",
+                onClick: () => removeCommitteeMember(category, mIdx),
+                children: /*#__PURE__*/_jsxDEV("span", {
+                  className: "material-symbols-outlined",
+                  children: "delete"
+                }, void 0, false)
+              }, void 0, false)
+            }, void 0, false)]
           }, mIdx, true))]
         }, category, true))]
       }, void 0, true), /*#__PURE__*/_jsxDEV("div", {
@@ -291,7 +437,266 @@ function Admin({}) {
           children: status
         }, void 0, false)]
       }, void 0, true)]
-    }, void 0, true)]
+    }, void 0, true), /*#__PURE__*/_jsxDEV(ImageLibrary, {}, void 0, false), editingEvent && /*#__PURE__*/_jsxDEV("div", {
+      className: "admin-modal-backdrop",
+      children: /*#__PURE__*/_jsxDEV("div", {
+        className: "admin-modal",
+        children: [/*#__PURE__*/_jsxDEV("div", {
+          className: "admin-modal-header",
+          children: [/*#__PURE__*/_jsxDEV("h2", {
+            children: "Edit Event"
+          }, void 0, false), /*#__PURE__*/_jsxDEV("button", {
+            type: "button",
+            onClick: () => setEditingEventIndex(null),
+            children: "Close"
+          }, void 0, false)]
+        }, void 0, true), /*#__PURE__*/_jsxDEV("div", {
+          className: "admin-field",
+          children: [/*#__PURE__*/_jsxDEV("label", {
+            children: "Event Name"
+          }, void 0, false), /*#__PURE__*/_jsxDEV("input", {
+            name: "summary",
+            value: editingEvent.summary || "",
+            onChange: handleEventChange
+          }, void 0, false)]
+        }, void 0, true), /*#__PURE__*/_jsxDEV("div", {
+          className: "admin-field",
+          children: [/*#__PURE__*/_jsxDEV("label", {
+            children: "Date and Time"
+          }, void 0, false), /*#__PURE__*/_jsxDEV("input", {
+            name: "dateTime",
+            type: "datetime-local",
+            value: getDateTimeInputValue(editingEvent.start && editingEvent.start.dateTime),
+            onChange: handleEventChange
+          }, void 0, false)]
+        }, void 0, true), /*#__PURE__*/_jsxDEV("div", {
+          className: "admin-field",
+          children: [/*#__PURE__*/_jsxDEV("label", {
+            children: "Status"
+          }, void 0, false), /*#__PURE__*/_jsxDEV("select", {
+            name: "status",
+            value: editingEvent.status || "confirmed",
+            onChange: handleEventChange,
+            children: [/*#__PURE__*/_jsxDEV("option", {
+              value: "confirmed",
+              children: "Confirmed"
+            }, void 0, false), /*#__PURE__*/_jsxDEV("option", {
+              value: "cancelled",
+              children: "Cancelled"
+            }, void 0, false)]
+          }, void 0, true)]
+        }, void 0, true), /*#__PURE__*/_jsxDEV("div", {
+          className: "admin-field",
+          children: [/*#__PURE__*/_jsxDEV("label", {
+            children: "Location"
+          }, void 0, false), /*#__PURE__*/_jsxDEV("input", {
+            name: "location",
+            value: editingEvent.location || "",
+            onChange: handleEventChange
+          }, void 0, false)]
+        }, void 0, true), /*#__PURE__*/_jsxDEV("div", {
+          className: "admin-field",
+          children: [/*#__PURE__*/_jsxDEV("label", {
+            children: "Description"
+          }, void 0, false), /*#__PURE__*/_jsxDEV("textarea", {
+            name: "description",
+            value: editingEvent.description || "",
+            onChange: handleEventChange,
+            rows: "8",
+            className: "admin-textarea"
+          }, void 0, false)]
+        }, void 0, true), /*#__PURE__*/_jsxDEV("div", {
+          className: "admin-field",
+          children: [/*#__PURE__*/_jsxDEV("label", {
+            children: "Poster Image URL"
+          }, void 0, false), /*#__PURE__*/_jsxDEV("input", {
+            name: "posterUrl",
+            value: editingEvent.attachments && editingEvent.attachments.length ? editingEvent.attachments[0].fileUrl : "",
+            onChange: handleEventChange,
+            placeholder: "/img/poster1.webp"
+          }, void 0, false)]
+        }, void 0, true), /*#__PURE__*/_jsxDEV("div", {
+          className: "admin-modal-actions",
+          children: [/*#__PURE__*/_jsxDEV("button", {
+            type: "button",
+            className: "admin-delete-btn",
+            onClick: removeEditingEvent,
+            children: "Delete Event"
+          }, void 0, false), /*#__PURE__*/_jsxDEV("button", {
+            type: "button",
+            className: "admin-save-btn",
+            onClick: () => setEditingEventIndex(null),
+            children: "Done"
+          }, void 0, false)]
+        }, void 0, true)]
+      }, void 0, true)
+    }, void 0, false)]
+  }, void 0, true);
+}
+
+// ... existing code ...
+
+function ImageLibrary({}) {
+  const [images, setImages] = React.useState([]);
+  const [selectedImage, setSelectedImage] = React.useState(null);
+  const [status, setStatus] = React.useState('');
+  const [isUploading, setIsUploading] = React.useState(false);
+  React.useEffect(() => {
+    loadImages();
+  }, []);
+  const loadImages = () => {
+    fetch("/admin/images").then(response => response.json()).then(data => {
+      setImages(data.images || []);
+    }).catch(err => {
+      console.error("Failed to load images:", err);
+      setImages([]);
+      setStatus("Could not load images.");
+    });
+  };
+  const uploadImage = async e => {
+    const file = e.target.files[0];
+    if (!file) return;
+    const password = window.prompt("Enter admin password to upload image:");
+    if (!password) {
+      setStatus("Upload cancelled.");
+      e.target.value = "";
+      setTimeout(() => setStatus(""), 3000);
+      return;
+    }
+    const formData = new FormData();
+    formData.append("password", password);
+    formData.append("image", file);
+    setIsUploading(true);
+    setStatus("Uploading image...");
+    try {
+      const response = await fetch("/admin/images/upload", {
+        method: "POST",
+        body: formData
+      });
+      if (!response.ok) {
+        setStatus("Image upload failed.");
+        e.target.value = "";
+        setIsUploading(false);
+        return;
+      }
+      await response.json();
+      setStatus("Image uploaded successfully.");
+      e.target.value = "";
+      loadImages();
+      setTimeout(() => setStatus(""), 3000);
+    } catch (err) {
+      console.error("Image upload failed:", err);
+      setStatus("Server error while uploading image.");
+      e.target.value = "";
+    }
+    setIsUploading(false);
+  };
+  const copyImageLink = async link => {
+    try {
+      await navigator.clipboard.writeText(link);
+      setStatus("Image link copied.");
+      setTimeout(() => setStatus(""), 3000);
+    } catch (err) {
+      setStatus("Could not copy link. Select and copy it manually.");
+      setTimeout(() => setStatus(""), 3000);
+    }
+  };
+  return /*#__PURE__*/_jsxDEV("section", {
+    className: "admin-section image-library",
+    children: [/*#__PURE__*/_jsxDEV("h2", {
+      children: "Image Library"
+    }, void 0, false), /*#__PURE__*/_jsxDEV("div", {
+      className: "admin-upload-area",
+      children: [/*#__PURE__*/_jsxDEV("label", {
+        className: `admin-upload-label ${isUploading ? "disabled" : ""}`,
+        children: [/*#__PURE__*/_jsxDEV("span", {
+          className: "material-symbols-outlined",
+          children: "upload"
+        }, void 0, false), isUploading ? "Uploading..." : "Upload New Image", /*#__PURE__*/_jsxDEV("input", {
+          type: "file",
+          accept: "image/*",
+          onChange: uploadImage,
+          disabled: isUploading
+        }, void 0, false)]
+      }, void 0, true), /*#__PURE__*/_jsxDEV("button", {
+        type: "button",
+        className: "admin-add-btn",
+        onClick: loadImages,
+        disabled: isUploading,
+        children: "Refresh Images"
+      }, void 0, false)]
+    }, void 0, true), status && /*#__PURE__*/_jsxDEV("p", {
+      className: "admin-status",
+      children: status
+    }, void 0, false), /*#__PURE__*/_jsxDEV("div", {
+      className: "admin-image-grid",
+      children: images.length ? images.map(image => /*#__PURE__*/_jsxDEV("button", {
+        type: "button",
+        className: "admin-image-card",
+        onClick: () => setSelectedImage(image),
+        children: [/*#__PURE__*/_jsxDEV("img", {
+          src: image.url,
+          alt: image.filename
+        }, void 0, false), /*#__PURE__*/_jsxDEV("span", {
+          children: image.filename
+        }, void 0, false)]
+      }, image.path, true)) : /*#__PURE__*/_jsxDEV("p", {
+        children: "No images found."
+      }, void 0, false)
+    }, void 0, false), selectedImage && /*#__PURE__*/_jsxDEV("div", {
+      className: "admin-modal-backdrop",
+      children: /*#__PURE__*/_jsxDEV("div", {
+        className: "admin-modal admin-image-modal",
+        children: [/*#__PURE__*/_jsxDEV("div", {
+          className: "admin-modal-header",
+          children: [/*#__PURE__*/_jsxDEV("h2", {
+            children: selectedImage.filename
+          }, void 0, false), /*#__PURE__*/_jsxDEV("button", {
+            type: "button",
+            onClick: () => setSelectedImage(null),
+            children: "Close"
+          }, void 0, false)]
+        }, void 0, true), /*#__PURE__*/_jsxDEV("img", {
+          className: "admin-full-image",
+          src: selectedImage.url,
+          alt: selectedImage.filename
+        }, void 0, false), /*#__PURE__*/_jsxDEV("div", {
+          className: "admin-field",
+          children: [/*#__PURE__*/_jsxDEV("label", {
+            children: "Image path to use in admin fields"
+          }, void 0, false), /*#__PURE__*/_jsxDEV("div", {
+            className: "admin-copy-row",
+            children: [/*#__PURE__*/_jsxDEV("input", {
+              readOnly: true,
+              value: selectedImage.path,
+              onFocus: e => e.target.select()
+            }, void 0, false), /*#__PURE__*/_jsxDEV("button", {
+              type: "button",
+              className: "admin-add-btn",
+              onClick: () => copyImageLink(selectedImage.path),
+              children: "Copy"
+            }, void 0, false)]
+          }, void 0, true)]
+        }, void 0, true), /*#__PURE__*/_jsxDEV("div", {
+          className: "admin-field",
+          children: [/*#__PURE__*/_jsxDEV("label", {
+            children: "Direct image URL"
+          }, void 0, false), /*#__PURE__*/_jsxDEV("div", {
+            className: "admin-copy-row",
+            children: [/*#__PURE__*/_jsxDEV("input", {
+              readOnly: true,
+              value: selectedImage.url,
+              onFocus: e => e.target.select()
+            }, void 0, false), /*#__PURE__*/_jsxDEV("button", {
+              type: "button",
+              className: "admin-add-btn",
+              onClick: () => copyImageLink(selectedImage.url),
+              children: "Copy"
+            }, void 0, false)]
+          }, void 0, true)]
+        }, void 0, true)]
+      }, void 0, true)
+    }, void 0, false)]
   }, void 0, true);
 }
 import { jsxDEV as _jsxDEV } from "react/jsx-dev-runtime";
@@ -403,33 +808,41 @@ function Events({}) {
   const [eventsJson, setEventsJson] = React.useState([]);
   const [events, setEvents] = React.useState([]);
   const [current, setCurrent] = React.useState(0);
-  const calendarID = "5ed625756269cf77deab7070dd37ddc88d865b92dab32ebfc77eb0ff0bd7e8ac@group.calendar.google.com";
-  const apiKey = "AIzaSyCxXc28FCub4QScbrWUkaL9Ml13xx2qJl4";
+  fetch("/events.json").then(response => response.json()).then(data => {
+    let tempEvents = [];
+    data.events.forEach(event => {
+      if (event.status === "confirmed" && new Date(event.start.dateTime) > Date.now()) {
+        tempEvents.push(event);
+      }
+    });
+    tempEvents.sort((a, b) => {
+      return a.start.dateTime.localeCompare(b.start.dateTime);
+    });
+    setEventsJson(tempEvents);
+  }).catch(error => {
+    console.error("Failed to load events.json:", error);
+    setEventsJson([]);
+  });
   const count = events.length;
   const isMobile = mobileCheck();
   const prev = () => setCurrent(i => Math.max(0, i - 1));
   const next = () => setCurrent(i => Math.min(count - 1, i + 1));
   React.useEffect(() => {
-    fetch(`https://www.googleapis.com/calendar/v3/calendars/${calendarID}/events?key=${apiKey}`).then(response => response.json()).then(data => {
-      console.log(data);
-      let tempEvents = [];
-      data.items.forEach((event, i) => {
-        if (event.status === "confirmed" && new Date(event.start.dateTime) > Date.now()) {
-          tempEvents.push(event);
-        }
-      });
-      tempEvents.sort((a, b) => {
-        return a.start.dateTime.localeCompare(b.start.dateTime);
-      });
-      setEventsJson(tempEvents);
+    let tempEvents = [];
+    eventsJson.forEach((event, i) => {
+      tempEvents.push(/*#__PURE__*/_jsxDEV(Event, {
+        event: event,
+        index: i,
+        isMobile: isMobile
+      }, i, false));
     });
-  }, []);
+    setEvents(tempEvents);
+  }, [eventsJson]);
   React.useEffect(() => {
     let tempEvents = [];
     eventsJson.forEach((event, i) => {
       tempEvents.push(/*#__PURE__*/_jsxDEV(Event, {
         event: event,
-        apiKey: apiKey,
         index: i,
         isMobile: isMobile
       }, i, false));
@@ -480,15 +893,15 @@ function Events({}) {
 }
 function Event({
   event,
-  apiKey,
   index,
   isMobile
 }) {
   const imgRef = React.useRef(null);
-  function getAttachmentUrl(driveUrl) {
-    let idIndex = driveUrl.lastIndexOf("id=");
-    let fileID = driveUrl.substring(idIndex + 3);
-    return `https://content.googleapis.com/drive/v3/files/${fileID}?key=${apiKey}&alt=media&source=downloadUrl`;
+  function getAttachmentUrl(url) {
+    // let idIndex = url.lastIndexOf("id=")
+    // let fileID = url.substring(idIndex + 3)
+    // return `https://content.googleapis.com/drive/v3/files/${fileID}?key=${apiKey}&alt=media&source=downloadUrl`
+    return url;
   }
   function onLoad() {
     imgRef.current.style.aspectRatio = `${imgRef.current.naturalWidth}/${imgRef.current.naturalHeight}`;
@@ -702,17 +1115,13 @@ function Icon({
   }
   if (Object.keys(iconPaths).includes(icon) || icon === "siteLogo") {
     let d = iconPaths[icon];
-    const context = React.useContext(app);
-    if (icon === "siteLogo") {
-      return /*#__PURE__*/_jsxDEV("span", {
-        ...opts,
-        className: "icon",
-        onClick: onClick,
-        dangerouslySetInnerHTML: {
-          __html: context.siteJson.site_logo
-        }
-      }, void 0, false);
-    }
+    // const context = React.useContext(app)
+    // if (icon === "siteLogo") {
+    // 	return (
+    // 		<span {...opts} className={"icon"} onClick={onClick} dangerouslySetInnerHTML={{__html: context.siteJson.site_logo}}></span>
+    // 	)
+    // }
+
     return /*#__PURE__*/_jsxDEV("svg", {
       ...opts,
       className: `icon ${className}`,
