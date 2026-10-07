@@ -2,6 +2,7 @@
 import hmac
 import json
 import os
+import re
 import sys
 import traceback
 
@@ -30,7 +31,6 @@ def send_response(status, content_type="application/json", body=""):
     print(f"Content-Type: {content_type}")
     print()
     sys.stdout.write(body)
-    
 
 
 def get_img_files():
@@ -330,10 +330,6 @@ def main():
             "<h1>Method Not Allowed</h1>"
         )
         return
-
-    try:
-        content_length = int(os.environ.get('CONTENT_LENGTH', 0))
-        raw_body = sys.stdin.read(content_length)
 
     if request_method != 'POST':
         send_response(
