@@ -18,6 +18,7 @@ function Admin({}) {
 	const [eventsContent, setEventsContent] = React.useState(null);
 	const [editingEventIndex, setEditingEventIndex] = React.useState(null);
 	const [status, setStatus] = React.useState('');
+	const [hasUnsavedChanges, setHasUnsavedChanges] = React.useState(false);
 
 	React.useEffect(() => {
 		fetch("/content.json")
@@ -51,6 +52,7 @@ function Admin({}) {
 		const lastKey = keys[keys.length - 1];
 		current[lastKey] = value;
 		setContent(newContent);
+		setHasUnsavedChanges(true);
 	};
 
 	const handleEventChange = (e) => {
@@ -84,6 +86,7 @@ function Admin({}) {
 
 		newEventsContent.events[editingEventIndex] = event;
 		setEventsContent(newEventsContent);
+		setHasUnsavedChanges(true);
 	};
 
 	const addEvent = () => {
@@ -106,6 +109,7 @@ function Admin({}) {
 
 		setEventsContent(newEventsContent);
 		setEditingEventIndex(newEventsContent.events.length - 1);
+		setHasUnsavedChanges(true);
 	};
 
 	const removeEditingEvent = () => {
@@ -118,6 +122,7 @@ function Admin({}) {
 
 		setEventsContent(newEventsContent);
 		setEditingEventIndex(null);
+		setHasUnsavedChanges(true);
 	};
 
 	const formatEventDateForList = (dateTime) => {
@@ -161,6 +166,7 @@ function Admin({}) {
 		};
 
 		setContent(newContent);
+		setHasUnsavedChanges(true);
 	};
 
 	const removeCommitteeMember = (category, memberIndex) => {
@@ -173,6 +179,7 @@ function Admin({}) {
 		};
 
 		setContent(newContent);
+		setHasUnsavedChanges(true);
 	};
 
 	const handleSave = async e => {
@@ -212,16 +219,17 @@ function Admin({}) {
 
 		try {
 			const response = await fetch('/admin/save', {
-			method: 'POST',
-			headers: { 'Content-Type': 'application/json' },
-			body: JSON.stringify({
-				...credentials,
-				content,
-				eventsContent
-			})
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({
+					...credentials,
+					content,
+					eventsContent
+				})
 			});
 			if (response.ok) {
 				setStatus('Changes saved successfully!');
+				setHasUnsavedChanges(false);
 				setTimeout(() => setStatus(''), 3000);
 			} else if (response.status === 403) {
 				setStatus('Authentication failed.');
@@ -375,6 +383,16 @@ function Admin({}) {
 					<button type="submit" className="admin-save-btn">Save All Changes</button>
 					{status && <p className="admin-status">{status}</p>}
 				</div>
+
+				{hasUnsavedChanges && (
+					<div className="admin-unsaved-overlay">
+						<div>
+							<strong>Unsaved changes</strong>
+							<span>Your updates have not been saved yet.</span>
+						</div>
+						<button type="submit" className="admin-save-btn">Save All Changes</button>
+					</div>
+				)}
 			</form>
 
 			<ImageLibrary />
