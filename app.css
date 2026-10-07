@@ -395,6 +395,199 @@ div.about:not(.mobile) div.committee > div.members div.member {
   color: #bbb;
 }
 
+/* Admin Page Styling */
+.admin {
+  max-width: 800px;
+  margin: 40px auto;
+  padding: 20px;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  background: #f9f9f9;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.admin-title {
+  text-align: center;
+  color: #333;
+  margin-bottom: 30px;
+}
+
+.admin-section {
+  margin-bottom: 30px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid #ddd;
+}
+
+.admin-section h2 {
+  margin-top: 0;
+  color: #555;
+  font-size: 1.2rem;
+}
+
+.admin-textarea {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 1rem;
+  resize: vertical;
+}
+
+.admin-row {
+  display: flex;
+  gap: 20px;
+  margin-bottom: 15px;
+}
+
+.admin-field {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.admin-field label {
+  font-size: 0.9rem;
+  margin-bottom: 5px;
+  color: #666;
+}
+
+.admin-field input {
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.admin-actions {
+  text-align: center;
+  margin-top: 20px;
+}
+
+.admin-save-btn {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 12px 30px;
+  border-radius: 4px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.admin-save-btn:hover {
+  background-color: #0056b3;
+}
+
+.admin-status {
+  margin-top: 15px;
+  font-weight: bold;
+  color: #28a745;
+}
+
+/* Preview styling for the CMS */
+.admin-input-preview {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.admin-input-preview input {
+  flex: 1;
+}
+
+.admin-image-preview {
+  width: 40px;
+  height: 40px;
+  object-fit: cover;
+  border-radius: 4px;
+  border: 1px solid #ddd;
+  background-color: #eee;
+}
+
+/* Optional: Dim the preview if the image fails to load (e.g. path is being typed) */
+.admin-image-preview:not([src]) {
+  opacity: 0.3;
+}
+
+.admin-events-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.admin-event-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  width: 100%;
+  padding: 0.85rem 1rem;
+  border: 1px solid #ccc;
+  border-radius: 0.5rem;
+  background: #fff;
+  cursor: pointer;
+  text-align: left;
+  font: inherit;
+}
+
+.admin-event-row:hover {
+  background: #f4f4f4;
+}
+
+.admin-add-btn {
+  padding: 0.75rem 1rem;
+  border: none;
+  border-radius: 0.5rem;
+  background: #333;
+  color: #fff;
+  cursor: pointer;
+}
+
+.admin-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  background: rgba(0, 0, 0, 0.55);
+}
+
+.admin-modal {
+  width: min(700px, 100%);
+  max-height: 90vh;
+  overflow: auto;
+  padding: 1.5rem;
+  border-radius: 0.75rem;
+  background: #fff;
+  box-shadow: 0 1rem 3rem rgba(0, 0, 0, 0.25);
+}
+
+.admin-modal-header,
+.admin-modal-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.admin-modal-header {
+  margin-bottom: 1rem;
+}
+
+.admin-modal-actions {
+  margin-top: 1.5rem;
+}
+
+.admin-delete-btn {
+  padding: 0.75rem 1rem;
+  border: none;
+  border-radius: 0.5rem;
+  background: #b00020;
+  color: #fff;
+  cursor: pointer;
+}
+
 div.react_icon {
   display: grid;
   place-items: center;
@@ -403,6 +596,162 @@ div.react_icon span.filled {
   font-variation-settings: "FILL" 1;
 }
 
+div#events {
+  display: grid;
+  height: 100dvh;
+  grid-template-areas: "padTop padTop padTop padTop padTop" "padL title title title padR" "padL events events events padR" "padL padM padM buttons padR" "padBottom padBottom padBottom padBottom padBottom";
+}
+div#events.mobile {
+  grid-template-rows: 0 min-content 1fr min-content 0.05rem;
+  grid-template-columns: 0.375rem 1fr 1rem min-content 0.375rem;
+}
+div#events:not(.mobile) {
+  grid-template-rows: 1rem min-content 1fr min-content 1rem;
+  grid-template-columns: 2rem 1fr 1rem min-content 1.5rem;
+}
+div#events h1 {
+  grid-area: title;
+  font-size: 2.5rem;
+}
+div#events.mobile h1 {
+  font-size: 2rem;
+  margin-block: 0.25rem;
+}
+
+div.buttons {
+  grid-area: buttons;
+  place-self: end;
+  display: grid;
+  grid-template-columns: auto auto;
+  grid-template-rows: auto;
+  grid-template-areas: "left right";
+  gap: 0.5rem;
+  padding-top: 1rem;
+}
+div.buttons div.right {
+  grid-area: right;
+}
+div.buttons div.left {
+  grid-area: left;
+}
+div.buttons div.button {
+  border-radius: 300rem;
+  background-color: teal;
+  aspect-ratio: 1;
+  width: 2.5rem;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  user-select: none;
+}
+
+div.events {
+  grid-area: events;
+  display: flex;
+  overflow-x: scroll;
+  scroll-snap-type: x mandatory;
+}
+div.events::-webkit-scrollbar {
+  display: none;
+}
+div.events {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+div.events div.noEvents {
+  width: 100%;
+  height: 100%;
+  display: grid;
+  place-items: center;
+}
+div.events div.event {
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
+  flex-grow: 10;
+  margin-right: 1rem;
+  min-width: min-content;
+  background-color: #333333;
+  display: grid;
+}
+div.events div.event:not(.mobile) {
+  grid-template-columns: max-content 1fr auto;
+  grid-template-rows: 100%;
+  grid-template-areas: "content pad poster";
+}
+div.events div.event.mobile {
+  width: 100%;
+  grid-template-rows: auto 1fr auto;
+  grid-template-columns: 97dvw;
+  grid-template-areas: "content" "pad" "poster";
+}
+div.events div.event.mobile div.content {
+  padding: 1rem 1.5rem;
+  text-align: center;
+  justify-content: space-between;
+}
+div.events div.event.mobile div.content * {
+  margin-block: 0;
+}
+div.events div.event.mobile div.poster {
+  grid-area: poster;
+  max-height: 48vh;
+  width: 100%;
+}
+div.events div.event.mobile img {
+  display: block;
+  object-fit: contain;
+  place-self: end center;
+}
+div.events div.event {
+  border-radius: 3rem;
+  overflow: hidden;
+}
+div.events div.event div.content {
+  display: flex;
+  flex-direction: column;
+  grid-area: content;
+  padding: 1.5rem 3rem;
+}
+div.events div.event div.content h1, div.events div.event div.content h2, div.events div.event div.content h3, div.events div.event div.content p {
+  margin-block: 0.5rem;
+}
+div.events div.event a, div.events div.event a:visited, div.events div.event a:hover, div.events div.event a:active, div.events div.event a:focus {
+  color: white;
+  text-decoration-style: dotted;
+}
+div.events div.event img {
+  grid-area: poster;
+  display: block;
+  object-fit: contain;
+  height: 100%;
+}
+div.events div.event div.poster {
+  max-width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+nav {
+  display: flex;
+  flex-direction: row;
+  gap: 1em;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(1em);
+  width: 100%;
+}
+nav > div {
+  cursor: pointer;
+  font-size: 2em;
+  font-weight: 700;
+  padding: 1em;
+  user-select: none;
+  border-bottom: 0.3125rem solid teal;
+}
+nav > div span {
+  filter: url("#smooth-outline");
+  user-select: none;
+}
 body {
   background-color: #2b2b2b;
   color: #fff;
