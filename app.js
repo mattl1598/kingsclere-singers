@@ -76,6 +76,7 @@ function Admin({}) {
   const [eventsContent, setEventsContent] = React.useState(null);
   const [editingEventIndex, setEditingEventIndex] = React.useState(null);
   const [status, setStatus] = React.useState('');
+  const [hasUnsavedChanges, setHasUnsavedChanges] = React.useState(false);
   React.useEffect(() => {
     fetch("/content.json").then(response => response.json()).then(data => setContent(data)).catch(err => console.error("Failed to load content:", err));
     fetch("/events.json").then(response => response.json()).then(data => setEventsContent(data)).catch(err => console.error("Failed to load events:", err));
@@ -103,6 +104,7 @@ function Admin({}) {
     const lastKey = keys[keys.length - 1];
     current[lastKey] = value;
     setContent(newContent);
+    setHasUnsavedChanges(true);
   };
   const handleEventChange = e => {
     const {
@@ -135,6 +137,7 @@ function Admin({}) {
     }
     newEventsContent.events[editingEventIndex] = event;
     setEventsContent(newEventsContent);
+    setHasUnsavedChanges(true);
   };
   const addEvent = () => {
     const newEventsContent = {
@@ -152,6 +155,7 @@ function Admin({}) {
     };
     setEventsContent(newEventsContent);
     setEditingEventIndex(newEventsContent.events.length - 1);
+    setHasUnsavedChanges(true);
   };
   const removeEditingEvent = () => {
     if (editingEventIndex === null) return;
@@ -161,6 +165,7 @@ function Admin({}) {
     };
     setEventsContent(newEventsContent);
     setEditingEventIndex(null);
+    setHasUnsavedChanges(true);
   };
   const formatEventDateForList = dateTime => {
     if (!dateTime) return "No date set";
@@ -193,6 +198,7 @@ function Admin({}) {
       }
     };
     setContent(newContent);
+    setHasUnsavedChanges(true);
   };
   const removeCommitteeMember = (category, memberIndex) => {
     const newContent = {
@@ -203,6 +209,7 @@ function Admin({}) {
       }
     };
     setContent(newContent);
+    setHasUnsavedChanges(true);
   };
   const handleSave = async e => {
     e.preventDefault();
@@ -245,6 +252,7 @@ function Admin({}) {
       });
       if (response.ok) {
         setStatus('Changes saved successfully!');
+        setHasUnsavedChanges(false);
         setTimeout(() => setStatus(''), 3000);
       } else if (response.status === 403) {
         setStatus('Authentication failed.');
@@ -435,6 +443,19 @@ function Admin({}) {
         }, void 0, false), status && /*#__PURE__*/_jsxDEV("p", {
           className: "admin-status",
           children: status
+        }, void 0, false)]
+      }, void 0, true), hasUnsavedChanges && /*#__PURE__*/_jsxDEV("div", {
+        className: "admin-unsaved-overlay",
+        children: [/*#__PURE__*/_jsxDEV("div", {
+          children: [/*#__PURE__*/_jsxDEV("strong", {
+            children: "Unsaved changes"
+          }, void 0, false), /*#__PURE__*/_jsxDEV("span", {
+            children: "Your updates have not been saved yet."
+          }, void 0, false)]
+        }, void 0, true), /*#__PURE__*/_jsxDEV("button", {
+          type: "submit",
+          className: "admin-save-btn",
+          children: "Save All Changes"
         }, void 0, false)]
       }, void 0, true)]
     }, void 0, true), /*#__PURE__*/_jsxDEV(ImageLibrary, {}, void 0, false), editingEvent && /*#__PURE__*/_jsxDEV("div", {
